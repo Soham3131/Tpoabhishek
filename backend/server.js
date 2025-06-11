@@ -137,7 +137,7 @@ connectDB(); // Connect to MongoDB after dotenv.config()
 const app = express();
 
 app.use(cors({
-  origin: 'http://localhost:3000',
+ origin: 'https://tpoabhishek.vercel.app',
   credentials: true,
 }));
 

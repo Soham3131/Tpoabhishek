@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:5000",
+   baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000",
   withCredentials: true,
 });
 
@@ -24,10 +24,14 @@ axiosInstance.interceptors.request.use(async (config) => {
   if (shouldAddCsrfHeader) {
     try {
       // Fetch CSRF token from the dedicated endpoint
-      const csrfResponse = await fetch("http://localhost:5000/csrf-token", {
-        method: 'GET', // Ensure it's a GET request
-        credentials: 'include'
-      });
+      // const csrfResponse = await fetch("http://localhost:5000/csrf-token", {
+      //   method: 'GET', // Ensure it's a GET request
+      //   credentials: 'include'
+      // });
+const csrfResponse = await fetch(`${import.meta.env.VITE_API_URL}/csrf-token`, {
+  method: 'GET',
+  credentials: 'include'
+}); 
 
       if (!csrfResponse.ok) {
           // If the csrf-token endpoint itself returns an error (e.g., 404/500)
