@@ -6,7 +6,7 @@
 **/.env.local
 **/.env.production
 **/.env.development
-**/package-lock.json
+
 
 # Build artifacts
 **/dist/
