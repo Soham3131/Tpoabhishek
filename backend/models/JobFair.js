@@ -1,0 +1,47 @@
+// const mongoose = require("mongoose");
+
+// const jobFairSchema = new mongoose.Schema({
+//   title: { type: String, required: true },
+//   organizer: String,
+//   date: Date, // Assuming 'date' will be used for expiry
+//   location: String,
+//   description: String,
+//   link: String,
+//   // New fields for creator and status
+//   user: {
+//     type: mongoose.Schema.Types.ObjectId,
+//     ref: "User",
+//     required: true // Assuming a job fair must be created by a logged-in user
+//   },
+//   status: {
+//     type: String,
+//     enum: ["active", "expired", "archived", "draft"],
+//     default: "active",
+//   },
+// }, { timestamps: true });
+
+// module.exports = mongoose.model("JobFair", jobFairSchema);
+
+const mongoose = require("mongoose");
+
+const jobFairSchema = new mongoose.Schema({
+  title: { type: String, required: true },
+  organizer: String,
+  date: Date,
+  location: String,
+  description: String,
+  link: String,
+  participatingCompanies: [String], // CORRECTED: Defined as an array of strings
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true
+  },
+  status: {
+    type: String,
+    enum: ["active", "expired", "archived", "draft"],
+    default: "active",
+  },
+}, { timestamps: true });
+
+module.exports = mongoose.model("JobFair", jobFairSchema);

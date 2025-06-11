@@ -1,0 +1,17 @@
+# Root .gitignore
+
+# Ignore node_modules and envs in both frontend and backend
+**/node_modules/
+**/.env
+**/.env.local
+**/.env.production
+**/.env.development
+**/package-lock.json
+
+# Build artifacts
+**/dist/
+**/build/
+
+# OS/system files
+.DS_Store
+Thumbs.db
