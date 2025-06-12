@@ -252,6 +252,7 @@ exports.getResume = async (req, res) => {
 // @access  Private (User) - Requires protect middleware
 exports.generateResumePDF = async (req, res) => {
   const userId = req.user.id;
+  let browser;
 
   try {
     const resume = await Resume.findOne({ user: userId });
@@ -260,53 +261,45 @@ exports.generateResumePDF = async (req, res) => {
       return res.status(404).json({ msg: "Resume not found for this user. Please create one first." });
     }
 
-    // Convert Mongoose document to a plain JavaScript object for easier handling
     const resumeData = resume.toObject();
-
-    // Generate HTML content for the PDF
     const resumeHtml = generateResumeHtml(resumeData);
 
+    const isProduction = process.env.AWS_LAMBDA_FUNCTION_VERSION || process.env.NODE_ENV === 'production';
 
+    browser = await puppeteer.launch({
+      args: chromium.args,
+      defaultViewport: chromium.defaultViewport,
+      executablePath: isProduction
+        ? await chromium.executablePath
+        : '/usr/bin/google-chrome-stable',
+      headless: chromium.headless,
+    });
 
-let browser;
-try {
-  browser = await puppeteer.launch({
-    args: chromium.args,
-    defaultViewport: chromium.defaultViewport,
-    executablePath: await chromium.executablePath || '/usr/bin/chromium-browser',
-    headless: chromium.headless,
-  });
+    const page = await browser.newPage();
+    await page.setContent(resumeHtml, { waitUntil: 'networkidle0' });
+    await page.emulateMediaType('screen');
 
+    const pdfBuffer = await page.pdf({
+      format: 'A4',
+      printBackground: true,
+      margin: { top: '1cm', right: '1cm', bottom: '1cm', left: '1cm' },
+    });
 
-      const page = await browser.newPage();
-      await page.setContent(resumeHtml, { waitUntil: 'networkidle0' }); // Wait for network to be idle before printing
-      await page.emulateMediaType('screen'); // Ensure screen media type for styling
+    res.setHeader('Content-Type', 'application/pdf');
+    const fileName = resumeData.fullName ? resumeData.fullName.replace(/\s/g, '_') : 'Resume';
+    res.setHeader('Content-Disposition', `attachment; filename=${fileName}_Resume.pdf`);
+    res.send(pdfBuffer);
 
-      const pdfBuffer = await page.pdf({
-        format: 'A4',
-        printBackground: true, // Include background colors/images from CSS
-        margin: { top: '1cm', right: '1cm', bottom: '1cm', left: '1cm' },
-      });
-
-      res.setHeader('Content-Type', 'application/pdf');
-      // Ensure filename is web-safe and uses full name from resume
-      const fileName = resumeData.fullName ? resumeData.fullName.replace(/\s/g, '_') : 'Resume';
-      res.setHeader('Content-Disposition', `attachment; filename=${fileName}_Resume.pdf`);
-      res.send(pdfBuffer);
-
-    } catch (launchError) {
-      console.error("Error launching browser or generating PDF:", launchError);
-      res.status(500).json({ msg: "Error generating resume PDF", error: launchError.message });
-    } finally {
-      if (browser) {
-        await browser.close(); // Ensure browser is closed to free up resources
-      }
-    }
   } catch (err) {
-    console.error("Error fetching resume data or general PDF error:", err);
+    console.error("Error generating resume PDF:", err);
     res.status(500).json({ msg: "Error generating resume PDF", error: err.message });
+  } finally {
+    if (browser) {
+      await browser.close();
+    }
   }
 };
+
 
 // Helper function to generate HTML for the resume PDF
 const generateResumeHtml = (resumeData) => {
