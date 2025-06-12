@@ -1,6 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const { createOrUpdateResume, getResume, generateResumePDF } = require("../controllers/resumeController");
+const pdf = require("html-pdf-node");
+
+
 
 // CORRECT IMPORT: Destructure 'protect' from the object exported by authMiddleware
 const { protect } = require("../middlewares/authMiddleware"); 
