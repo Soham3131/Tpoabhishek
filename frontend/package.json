@@ -2,7 +2,6 @@
   "name": "my-project",
   "version": "0.1.0",
   "private": true,
-   "proxy": "http://localhost:5000",
   "dependencies": {
     "@fontsource/inter": "^5.2.5",
     "@heroicons/react": "^2.2.0",
@@ -33,14 +32,12 @@
     "react-toastify": "^11.0.5",
     "web-vitals": "^2.1.4"
   },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "server": "cd server && npm run dev",
-    "dev": "concurrently -n \"client,server\" -c \"bgBlue,bgYellow\" \"npm start\" \"npm run server\""
-  },
+ "scripts": {
+  "start": "react-scripts start",
+  "server": "cd ../backend && npm start",
+  "dev": "concurrently -n \"client,server\" -c \"bgBlue,bgYellow\" \"npm start\" \"npm run server\""
+},
+
   "eslintConfig": {
     "extends": [
       "react-app",
@@ -61,6 +58,7 @@
   },
   "devDependencies": {
     "autoprefixer": "^10.4.20",
+    "concurrently": "^9.1.2",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.14"
   }

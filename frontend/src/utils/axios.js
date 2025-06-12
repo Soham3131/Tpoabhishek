@@ -1,5 +1,6 @@
 import axios from "axios";
-const baseURL = import.meta.env.VITE_API_URL;
+const baseURL = process.env.REACT_APP_API_URL;
+
 
 if (!baseURL) {
   throw new Error("VITE_API_URL is not defined! Check your .env or Vercel env config.");
@@ -34,10 +35,10 @@ axiosInstance.interceptors.request.use(async (config) => {
       //   method: 'GET', // Ensure it's a GET request
       //   credentials: 'include'
       // });
-const csrfResponse = await fetch(`${import.meta.env.VITE_API_URL}/csrf-token`, {
+const csrfResponse = await fetch(`${process.env.REACT_APP_API_URL}/csrf-token`, {
   method: 'GET',
   credentials: 'include'
-}); 
+});
 
       if (!csrfResponse.ok) {
           // If the csrf-token endpoint itself returns an error (e.g., 404/500)

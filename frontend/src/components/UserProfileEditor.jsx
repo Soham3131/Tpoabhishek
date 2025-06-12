@@ -281,7 +281,7 @@ const UserProfileEditor = ({ onCloseDropdown }) => {
     setError(null);
     setMessage(null);
     try {
-      const response = await fetch("http://localhost:5000/api/resume/pdf", {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/api/resume/pdf`, {
         method: "GET",
         credentials: "include",
       });

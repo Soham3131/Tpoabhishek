@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }) => {
     const checkLogin = async () => {
       try {
         // Use axiosInstance to benefit from withCredentials and interceptors
-        const res = await axios.get("http://localhost:5000/api/auth/me", {
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/auth/me`, {
           withCredentials: true, // Crucial for sending cookies
         });
         
