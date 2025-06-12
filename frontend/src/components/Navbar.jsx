@@ -197,7 +197,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { logoutUser } from "../services/authService";
 import UserProfileEditor from "../components/UserProfileEditor";
-import logo from "../assets/logo.png"; // Ensure this path is correct and logo1.png exists
+import logo from "../assets/logo.png"; // Ensure this path is correct
 import { UserCircleIcon, Bars3Icon, XMarkIcon } from '@heroicons/react/24/solid'; // Import Bars3Icon and XMarkIcon
 
 const Navbar = () => {
@@ -252,8 +252,8 @@ const Navbar = () => {
     return "/"; // Default for non-logged-in users
   };
 
-  // Define services items that are always present
-  let servicesItems = [
+  // Define services items for desktop (will not appear in mobile menu)
+  const desktopServicesItems = [
     ["Seminars", "/seminars"],
     ["Certified Trainings", "/trainings"],
     ["Industrial Visits", "/visits"],
@@ -261,20 +261,74 @@ const Navbar = () => {
     ["Job Fairs", "/jobfairs"],
   ];
 
-  // Add "My Applications" only if the user is logged in AND is not an admin
-  if (isLoggedIn && user?.role !== 'admin') {
-    servicesItems = [["My Applications", "/my-applications"], ...servicesItems];
-  }
-
-  // Common Nav Links for both desktop and mobile
+  // Main Nav Links for desktop (Internships, Jobs)
   const mainNavLinks = [
     { name: "Internships", link: "/internships" },
     { name: "Jobs", link: "/jobs" },
   ];
 
+  // Mobile-specific user menu items
+  const mobileUserMenuItems = [];
+  if (isLoggedIn) {
+    mobileUserMenuItems.push(
+      <div key="mobile-profile-info" className="flex flex-col items-center p-4">
+        {user?.profilePicture ? (
+          <img src={user.profilePicture} alt="Profile" className="w-16 h-16 rounded-full object-cover border-2 border-white mb-2" />
+        ) : (
+          <UserCircleIcon className="w-16 h-16 text-white mb-2" />
+        )}
+        <span className="text-white text-lg font-semibold">{user?.name || 'User'}</span>
+        <span className="text-gray-300 text-sm">{user?.email}</span>
+      </div>
+    );
+    if (user?.role !== 'admin') {
+      mobileUserMenuItems.push(
+        <Link
+          key="my-applications-mobile"
+          to="/my-applications"
+          className="block w-full text-center text-white text-xl font-medium py-3 hover:bg-[#FF6B35] transition"
+          onClick={() => setMobileMenuOpen(false)}
+        >
+          My Applications
+        </Link>
+      );
+    }
+    mobileUserMenuItems.push(
+      <button
+        key="logout-mobile"
+        onClick={handleLogout}
+        className="w-full text-white px-6 py-3 rounded-full font-semibold bg-[#FF6B35] hover:bg-orange-600 transition duration-300 shadow-lg mt-4"
+      >
+        Logout
+      </button>
+    );
+  } else {
+    mobileUserMenuItems.push(
+      <Link
+        key="signup-mobile"
+        to="/signup"
+        className="w-full text-white px-6 py-3 rounded-full font-semibold bg-[#FF6B35] hover:bg-orange-600 transition duration-300 shadow-lg text-center"
+        onClick={() => setMobileMenuOpen(false)}
+      >
+        Sign Up
+      </Link>
+    );
+    mobileUserMenuItems.push(
+      <Link
+        key="login-mobile"
+        to="/login"
+        className="w-full border-2 border-white text-white px-6 py-3 rounded-full font-semibold hover:bg-white hover:text-[#1E3A5F] transition duration-300 shadow-lg text-center"
+        onClick={() => setMobileMenuOpen(false)}
+      >
+        Login
+      </Link>
+    );
+  }
+
+
   return (
-    <nav className="h-24 bg-gradient-to-r from-[#1E3A5F] via-[#2e567e] to-[#1E3A5F] text-white shadow-3xl animate-fade-in-down relative z-50">
-      <div className="container mx-auto px-4 sm:px-6 py-2 flex items-center justify-between h-full"> {/* Adjusted px for mobile */}
+    <nav className="h-24 bg-gradient-to-r from-[#1E3A5F] via-[#2e567e] to-[#1E3A5F] text-white shadow-3xl animate-fade-in-down relative z-50 overflow-hidden"> {/* Added overflow-hidden to nav */}
+      <div className="container mx-auto px-4 sm:px-6 py-2 flex items-center justify-between h-full">
         {/* Logo */}
         <div className="flex-shrink-0">
           <Link to={getHomeLink()} className="flex items-center transform hover:scale-105 transition-transform duration-200">
@@ -316,7 +370,7 @@ const Navbar = () => {
 
             {servicesOpen && (
               <div className="absolute top-full left-0 mt-3 bg-[#4A789C] text-white shadow-xl rounded-lg w-60 z-50 animate-fade-in-up-dropdown overflow-hidden border border-[#FF6B35]">
-                {servicesItems.map(([label, link]) => (
+                {desktopServicesItems.map(([label, link]) => (
                   <Link
                     key={label}
                     to={link}
@@ -380,81 +434,29 @@ const Navbar = () => {
 
       {/* Mobile Menu Overlay and Content */}
       {mobileMenuOpen && (
-        <div 
-          className="fixed inset-0 bg-black bg-opacity-70 z-40 md:hidden" 
+        <div
+          className="fixed inset-0 bg-black bg-opacity-70 z-40 md:hidden"
           onClick={() => setMobileMenuOpen(false)} // Close on clicking outside menu
         ></div>
       )}
       {mobileMenuOpen && (
         <div
           ref={mobileMenuRef} // Attach ref here
-          className="fixed top-0 right-0 w-64 h-full bg-[#1E3A5F] shadow-lg transform transition-transform duration-300 ease-in-out z-50 md:hidden"
-          style={{ transform: mobileMenuOpen ? 'translateX(0)' : 'translateX(100%)' }}
+          // Use 'left-0' and 'w-full' for a full-width slide-in from left, or 'right-0' and 'w-64' for side menu
+          className="fixed top-0 left-0 w-full h-full bg-[#1E3A5F] shadow-lg transform transition-transform duration-300 ease-in-out z-50 md:hidden"
+          // Conditional transform based on mobileMenuOpen state
+          style={{ transform: mobileMenuOpen ? 'translateX(0)' : 'translateX(-100%)' }}
         >
           <div className="p-4 flex justify-end">
             <button onClick={() => setMobileMenuOpen(false)} className="text-white focus:outline-none">
               <XMarkIcon className="w-8 h-8" />
             </button>
           </div>
-          <div className="flex flex-col items-center space-y-4 py-6">
-            {mainNavLinks.map((item) => (
-              <Link
-                key={item.name}
-                to={item.link}
-                className="block text-white text-xl font-medium hover:text-[#FF6B35] transition"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                {item.name}
-              </Link>
+          {/* Mobile Menu Links - Simplified */}
+          <div className="flex flex-col items-center space-y-4 py-6 px-4">
+            {mobileUserMenuItems.map((item, index) => (
+              <React.Fragment key={index}>{item}</React.Fragment>
             ))}
-            {servicesItems.map(([label, link]) => (
-              <Link
-                key={label}
-                to={link}
-                className="block text-white text-xl font-medium hover:text-[#FF6B35] transition"
-                onClick={() => { setMobileMenuOpen(false); setServicesOpen(false); }}
-              >
-                {label}
-              </Link>
-            ))}
-
-            {isLoggedIn ? (
-                <>
-                    {/* Placeholder for user profile if desired in mobile menu */}
-                    <div className="flex items-center space-x-2 text-white text-lg mt-4">
-                        {user?.profilePicture ? (
-                            <img src={user.profilePicture} alt="Profile" className="w-10 h-10 rounded-full object-cover" />
-                        ) : (
-                            <UserCircleIcon className="w-10 h-10" />
-                        )}
-                        <span>{user?.name || 'User'}</span>
-                    </div>
-                    {/* Logout button in mobile menu */}
-                    <button
-                        onClick={handleLogout}
-                        className="w-auto bg-[#FF6B35] text-white px-6 py-3 rounded-full font-semibold hover:bg-orange-600 transition duration-300 shadow-lg mt-4"
-                    >
-                        Logout
-                    </button>
-                </>
-            ) : (
-                <div className="flex flex-col space-y-4 w-full px-4 mt-4">
-                    <Link
-                        to="/signup"
-                        className="bg-[#FF6B35] text-white px-6 py-3 rounded-full font-semibold hover:bg-orange-600 transition duration-300 shadow-lg text-center"
-                        onClick={() => setMobileMenuOpen(false)}
-                    >
-                        Sign Up
-                    </Link>
-                    <Link
-                        to="/login"
-                        className="bg-transparent border-2 border-white text-white px-6 py-3 rounded-full font-semibold hover:bg-white hover:text-[#1E3A5F] transition duration-300 shadow-lg text-center"
-                        onClick={() => setMobileMenuOpen(false)}
-                    >
-                        Login
-                    </Link>
-                </div>
-            )}
           </div>
         </div>
       )}
