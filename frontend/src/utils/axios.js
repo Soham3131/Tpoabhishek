@@ -1,9 +1,10 @@
 import axios from "axios";
 const baseURL = process.env.REACT_APP_API_URL;
+console.log(REACT_APP_API_URL);
 
 
 if (!baseURL) {
-  throw new Error("VITE_API_URL is not defined! Check your .env or Vercel env config.");
+  throw new Error("REACT_APP_API_URL is not defined! Check your .env or Vercel env config.");
 }
 
 const axiosInstance = axios.create({
