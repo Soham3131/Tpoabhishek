@@ -192,7 +192,8 @@
 
 const Resume = require("../models/Resume");
 const chromium = require('chrome-aws-lambda');
-    const puppeteer = require('puppeteer-core');
+    const puppeteer = require('puppeteer'); // instead of puppeteer-core
+
 
 // @desc    Create or update a user's resume
 // @route   POST /api/resume
@@ -266,14 +267,11 @@ exports.generateResumePDF = async (req, res) => {
 
     const isProduction = process.env.AWS_LAMBDA_FUNCTION_VERSION || process.env.NODE_ENV === 'production';
 
-    browser = await puppeteer.launch({
-      args: chromium.args,
-      defaultViewport: chromium.defaultViewport,
-      executablePath: isProduction
-        ? await chromium.executablePath
-        : '/usr/bin/google-chrome-stable',
-      headless: chromium.headless,
-    });
+  browser = await puppeteer.launch({
+  headless: true,
+  args: ['--no-sandbox', '--disable-setuid-sandbox'],
+});
+
 
     const page = await browser.newPage();
     await page.setContent(resumeHtml, { waitUntil: 'networkidle0' });
