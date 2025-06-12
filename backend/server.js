@@ -32,7 +32,8 @@ const app = express();
 const allowedOrigins = [
   'http://localhost:3000',
   'https://tpoabhishek.vercel.app',
-    'https://tpoabhishek-fg5z.vercel.app'
+    'https://tpoabhishek-fg5z.vercel.app',
+    'https://tpoabhishek-awtb.vercel.app'
 ];
 
 app.use(cors({
