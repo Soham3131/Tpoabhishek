@@ -191,7 +191,6 @@
 // };
 
 // export default Navbar;
-
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -206,15 +205,17 @@ const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false); // State for mobile menu
   const { user, setUser, isLoggedIn } = useAuth();
   const navigate = useNavigate();
-  const profileDropdownRef = useRef(null); // Ref for profile dropdown
+  const profileDropdownRef = useRef(null); // Ref for profile dropdown (desktop)
   const mobileMenuRef = useRef(null); // Ref for mobile menu to close on outside click
 
   // Close dropdowns/menus on outside click
   useEffect(() => {
     const handleClickOutside = (event) => {
+      // Close desktop profile dropdown
       if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target)) {
         setProfileDropdownOpen(false);
       }
+      // Close mobile menu
       if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target)) {
         setMobileMenuOpen(false);
       }
@@ -230,11 +231,10 @@ const Navbar = () => {
       await logoutUser();
       setUser(null); // Clear user from context
       navigate("/login");
-      setProfileDropdownOpen(false); // Close dropdown on logout
+      setProfileDropdownOpen(false); // Close desktop dropdown on logout
       setMobileMenuOpen(false); // Close mobile menu on logout
     } catch (err) {
       console.error("Logout failed:", err);
-      // Implement a custom modal/toast for messages instead of alert()
       // For now, retaining alert as per previous pattern to avoid breaking functionality
       alert(err.response?.data?.msg || "Logout failed");
     }
@@ -252,7 +252,7 @@ const Navbar = () => {
     return "/"; // Default for non-logged-in users
   };
 
-  // Define services items for desktop (will not appear in mobile menu)
+  // Define services items for desktop (these will NOT appear in the mobile menu)
   const desktopServicesItems = [
     ["Seminars", "/seminars"],
     ["Certified Trainings", "/trainings"],
@@ -267,43 +267,21 @@ const Navbar = () => {
     { name: "Jobs", link: "/jobs" },
   ];
 
-  // Mobile-specific user menu items
-  const mobileUserMenuItems = [];
+  // Mobile-specific menu items to be displayed in the hamburger menu
+  const mobileMenuItems = [];
+
   if (isLoggedIn) {
-    mobileUserMenuItems.push(
-      <div key="mobile-profile-info" className="flex flex-col items-center p-4">
-        {user?.profilePicture ? (
-          <img src={user.profilePicture} alt="Profile" className="w-16 h-16 rounded-full object-cover border-2 border-white mb-2" />
-        ) : (
-          <UserCircleIcon className="w-16 h-16 text-white mb-2" />
-        )}
-        <span className="text-white text-lg font-semibold">{user?.name || 'User'}</span>
-        <span className="text-gray-300 text-sm">{user?.email}</span>
+    // When logged in, render the UserProfileEditor component directly within the mobile menu
+    mobileMenuItems.push(
+      <div key="user-profile-editor-mobile" className="w-full px-4 pt-4 text-white"> {/* Ensure text color for UserProfileEditor context */}
+        {/* Pass a function to onCloseDropdown that also closes the mobile menu.
+            UserProfileEditor is expected to handle its own internal layout and responsiveness. */}
+        <UserProfileEditor onCloseDropdown={() => { setProfileDropdownOpen(false); setMobileMenuOpen(false); }} />
       </div>
     );
-    if (user?.role !== 'admin') {
-      mobileUserMenuItems.push(
-        <Link
-          key="my-applications-mobile"
-          to="/my-applications"
-          className="block w-full text-center text-white text-xl font-medium py-3 hover:bg-[#FF6B35] transition"
-          onClick={() => setMobileMenuOpen(false)}
-        >
-          My Applications
-        </Link>
-      );
-    }
-    mobileUserMenuItems.push(
-      <button
-        key="logout-mobile"
-        onClick={handleLogout}
-        className="w-full text-white px-6 py-3 rounded-full font-semibold bg-[#FF6B35] hover:bg-orange-600 transition duration-300 shadow-lg mt-4"
-      >
-        Logout
-      </button>
-    );
   } else {
-    mobileUserMenuItems.push(
+    // When not logged in, show Sign Up and Login links in the mobile menu
+    mobileMenuItems.push(
       <Link
         key="signup-mobile"
         to="/signup"
@@ -313,7 +291,7 @@ const Navbar = () => {
         Sign Up
       </Link>
     );
-    mobileUserMenuItems.push(
+    mobileMenuItems.push(
       <Link
         key="login-mobile"
         to="/login"
@@ -327,7 +305,7 @@ const Navbar = () => {
 
 
   return (
-    <nav className="h-24 bg-gradient-to-r from-[#1E3A5F] via-[#2e567e] to-[#1E3A5F] text-white shadow-3xl animate-fade-in-down relative z-50 overflow-hidden"> {/* Added overflow-hidden to nav */}
+    <nav className="h-24 bg-gradient-to-r from-[#1E3A5F] via-[#2e567e] to-[#1E3A5F] text-white shadow-3xl animate-fade-in-down relative z-50 overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 py-2 flex items-center justify-between h-full">
         {/* Logo */}
         <div className="flex-shrink-0">
@@ -336,7 +314,7 @@ const Navbar = () => {
           </Link>
         </div>
 
-        {/* Hamburger/Close Icon for Mobile */}
+        {/* Hamburger/Close Icon for Mobile (hidden on md screens and larger) */}
         <div className="md:hidden flex items-center">
           <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="text-white focus:outline-none">
             {mobileMenuOpen ? (
@@ -347,8 +325,9 @@ const Navbar = () => {
           </button>
         </div>
 
-        {/* Desktop Nav Items */}
-        <div className="hidden md:flex flex-1 justify-center space-x-10 text-xl font-medium">
+        {/* Desktop Nav Items (hidden on screens smaller than md) */}
+        {/* Added border for visual debugging if needed */}
+        <div className="hidden md:flex flex-1 justify-center space-x-10 text-xl font-medium border border-transparent">
           {mainNavLinks.map((item) => (
             <Link
               key={item.name}
@@ -385,8 +364,8 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* Auth Buttons / Profile Icon (Desktop Only) */}
-        <div className="hidden md:flex items-center space-x-6 pr-4"> {/* Adjusted spacing for desktop */}
+        {/* Auth Buttons / Profile Icon (Desktop Only - hidden on screens smaller than md) */}
+        <div className="hidden md:flex items-center space-x-6 pr-4">
           {isLoggedIn ? (
             <div className="relative" ref={profileDropdownRef}>
               {/* Profile Icon */}
@@ -442,9 +421,8 @@ const Navbar = () => {
       {mobileMenuOpen && (
         <div
           ref={mobileMenuRef} // Attach ref here
-          // Use 'left-0' and 'w-full' for a full-width slide-in from left, or 'right-0' and 'w-64' for side menu
-          className="fixed top-0 left-0 w-full h-full bg-[#1E3A5F] shadow-lg transform transition-transform duration-300 ease-in-out z-50 md:hidden"
-          // Conditional transform based on mobileMenuOpen state
+          // This creates a full-width slide-in menu from the left
+          className="fixed top-0 left-0 w-full h-full bg-[#1E3A5F] shadow-lg transform transition-transform duration-300 ease-in-out z-50 md:hidden overflow-y-auto" // Added overflow-y-auto
           style={{ transform: mobileMenuOpen ? 'translateX(0)' : 'translateX(-100%)' }}
         >
           <div className="p-4 flex justify-end">
@@ -452,9 +430,9 @@ const Navbar = () => {
               <XMarkIcon className="w-8 h-8" />
             </button>
           </div>
-          {/* Mobile Menu Links - Simplified */}
+          {/* Mobile Menu Links/Components */}
           <div className="flex flex-col items-center space-y-4 py-6 px-4">
-            {mobileUserMenuItems.map((item, index) => (
+            {mobileMenuItems.map((item, index) => (
               <React.Fragment key={index}>{item}</React.Fragment>
             ))}
           </div>
