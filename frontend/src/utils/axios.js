@@ -32,11 +32,7 @@ axiosInstance.interceptors.request.use(async (config) => {
 
   if (shouldAddCsrfHeader) {
     try {
-      // Fetch CSRF token from the dedicated endpoint
-      // const csrfResponse = await fetch("http://localhost:5000/csrf-token", {
-      //   method: 'GET', // Ensure it's a GET request
-      //   credentials: 'include'
-      // });
+     
 const csrfResponse = await fetch(`${process.env.REACT_APP_API_URL}/csrf-token`, {
   method: 'GET',
   credentials: 'include'
@@ -61,10 +57,7 @@ const csrfResponse = await fetch(`${process.env.REACT_APP_API_URL}/csrf-token`, 
 
     } catch (error) {
       console.error("  Error in CSRF token interception:", error);
-      // Decide how to handle this critical error:
-      // Option 1: Re-throw to stop the request (recommended for security)
-      // throw new axios.Cancel('CSRF token acquisition failed');
-      // Option 2: Let it proceed, expecting backend to reject
+    
     }
   } else {
       // Ensure X-CSRF-Token header is absent for non-CSRF protected routes/methods
