@@ -191,8 +191,7 @@
 // };
 
 const Resume = require("../models/Resume");
-const puppeteer = require('puppeteer-core'); // Import puppeteer-core
-const chromium = require('@sparticuz/chromium'); // Import @sparticuz/chromium
+const puppeteer = require("puppeteer"); // Now import the full puppeteer package directly
 
 // @desc    Create or update a user's resume
 // @route   POST /api/resume
@@ -251,7 +250,7 @@ exports.getResume = async (req, res) => {
 // @route   GET /api/resume/pdf
 // @access  Private (User) - Requires protect middleware
 exports.generateResumePDF = async (req, res) => {
-  const userId = req.user.id; // Assuming req.user is populated by your protect middleware
+  const userId = req.user.id;
 
   try {
     const resume = await Resume.findOne({ user: userId });
@@ -268,17 +267,25 @@ exports.generateResumePDF = async (req, res) => {
 
     let browser;
     try {
-      // Launch Chromium using @sparticuz/chromium
+      // Launch Puppeteer, now configured to use a pre-installed Chromium from Render's environment
       browser = await puppeteer.launch({
-        args: chromium.args, // Use the recommended Chromium arguments from @sparticuz/chromium
-        defaultViewport: chromium.defaultViewport,
-        executablePath: await chromium.executablePath, // CRITICAL: This points to the bundled Chromium
-        headless: chromium.headless, // Use the headless setting from the package (true for production)
-        ignoreHTTPSErrors: true, // Useful for some dev environments, can be removed in production if not needed
+        // These arguments are crucial for headless Chrome in server environments
+        args: [
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+          '--disable-dev-shm-usage', // Recommended for low-memory environments like Render
+          '--disable-gpu',
+          '--single-process', // Can sometimes help stability in constrained environments
+          '--no-zygote' // Another option for certain Linux environments
+        ],
+        headless: true, // Keep headless as true for production
+        // The PUPPETEER_EXECUTABLE_PATH environment variable on Render will
+        // explicitly tell Puppeteer where to find Chrome.
+        // This makes the launch more robust as it bypasses auto-discovery.
       });
 
       const page = await browser.newPage();
-      await page.setContent(resumeHtml, { waitUntil: 'networkidle0' }); // Wait for network to be idle
+      await page.setContent(resumeHtml, { waitUntil: 'networkidle0' }); // Wait for network to be idle before printing
       await page.emulateMediaType('screen'); // Ensure screen media type for styling
 
       const pdfBuffer = await page.pdf({
@@ -298,7 +305,7 @@ exports.generateResumePDF = async (req, res) => {
       res.status(500).json({ msg: "Error generating resume PDF", error: launchError.message });
     } finally {
       if (browser) {
-        await browser.close(); // Ensure browser is closed
+        await browser.close(); // Ensure browser is closed to free up resources
       }
     }
   } catch (err) {
