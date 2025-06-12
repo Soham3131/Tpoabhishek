@@ -4,9 +4,41 @@ const puppeteer = require("puppeteer"); // Import puppeteer
 // @desc    Create or update a user's resume
 // @route   POST /api/resume
 // @access  Private (User) - Requires protect middleware
+exports.createOrUpdateResume = async (req, res) => {
+   // --- DEBUG LOGS START ---
+  console.log("createOrUpdateResume: --- START ---");
+  console.log("createOrUpdateResume: Authenticated userId:", req.user.id);
+  console.log("createOrUpdateResume: Received req.body:", req.body); // Check all resume data
+  // --- DEBUG LOGS END ---
+  try {
+    // req.user.id comes from your `protect` middleware, assuming it decodes the JWT
+    // and attaches the user's ID to the request object.
+    const userId = req.user.id;
+    const resumeData = req.body;
 
+    let resume = await Resume.findOne({ user: userId });
 
+    if (resume) {
+      // If resume exists, update it
+      resume = await Resume.findOneAndUpdate({ user: userId }, resumeData, {
+        new: true, // Return the updated document
+        runValidators: true, // Run Mongoose schema validators on update
+      });
+      res.status(200).json(resume);
+    } else {
+      // If no resume exists, create a new one
+      resume = await Resume.create({ ...resumeData, user: userId });
+      res.status(201).json(resume);
+    }
+  } catch (err) {
+    console.error(err); // Log the full error for debugging
+    res.status(500).json({ msg: "Error saving resume", error: err.message });
+  }
+};
 
+// @desc    Get a user's resume
+// @route   GET /api/resume
+// @access  Private (User) - Requires protect middleware
 exports.getResume = async (req, res) => {
   try {
     const userId = req.user.id;
