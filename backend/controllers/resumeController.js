@@ -191,7 +191,8 @@
 // };
 
 const Resume = require("../models/Resume");
-const puppeteer = require("puppeteer"); // Now import the full puppeteer package directly
+const chromium = require('chrome-aws-lambda');
+    const puppeteer = require('puppeteer-core');
 
 // @desc    Create or update a user's resume
 // @route   POST /api/resume
@@ -265,24 +266,17 @@ exports.generateResumePDF = async (req, res) => {
     // Generate HTML content for the PDF
     const resumeHtml = generateResumeHtml(resumeData);
 
-    let browser;
-    try {
-      // Launch Puppeteer, now configured to use a pre-installed Chromium from Render's environment
-      browser = await puppeteer.launch({
-        // These arguments are crucial for headless Chrome in server environments
-        args: [
-          '--no-sandbox',
-          '--disable-setuid-sandbox',
-          '--disable-dev-shm-usage', // Recommended for low-memory environments like Render
-          '--disable-gpu',
-          '--single-process', // Can sometimes help stability in constrained environments
-          '--no-zygote' // Another option for certain Linux environments
-        ],
-        headless: true, // Keep headless as true for production
-        // The PUPPETEER_EXECUTABLE_PATH environment variable on Render will
-        // explicitly tell Puppeteer where to find Chrome.
-        // This makes the launch more robust as it bypasses auto-discovery.
-      });
+
+
+let browser;
+try {
+  browser = await puppeteer.launch({
+    args: chromium.args,
+    defaultViewport: chromium.defaultViewport,
+    executablePath: await chromium.executablePath || '/usr/bin/chromium-browser',
+    headless: chromium.headless,
+  });
+
 
       const page = await browser.newPage();
       await page.setContent(resumeHtml, { waitUntil: 'networkidle0' }); // Wait for network to be idle before printing
