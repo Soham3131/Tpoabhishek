@@ -7,15 +7,27 @@ const { generateOTP, getExpiry } = require("../services/otpService");
 const { sendEmail } = require("../services/emailService");
 const { uploadImageToCloudinary } = require("../utils/uploadImage"); // Ensure this path is correct
 
-// Helper function to set JWT as HttpOnly cookie
+
 const setAuthCookies = (res, userId, userRole) => {
-  const token = generateToken(userId, userRole);
-  res.cookie('token', token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'None',
-    maxAge: 7 * 24 * 60 * 60 * 1000
-  });
+  const token = generateToken(userId, userRole);
+
+  const cookieOptions = {
+    httpOnly: true,
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+    path: '/', 
+  };
+
+  if (process.env.NODE_ENV === 'production') {
+    // For production (HTTPS), require Secure and SameSite: 'None' for cross-origin requests
+    cookieOptions.secure = true;
+    cookieOptions.sameSite = 'None';
+  } else {
+ 
+    cookieOptions.secure = false; // Explicitly set to false for http
+    cookieOptions.sameSite = 'Lax';
+  }
+
+  res.cookie('token', token, cookieOptions);
 };
 
 // @desc    Register new user (sends OTP for verification)

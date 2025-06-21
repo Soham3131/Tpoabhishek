@@ -97,6 +97,7 @@
 
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import axiosInstance from '../utils/axios'; 
 import { useAuth } from '../context/AuthContext';
 import { DocumentTextIcon, LinkIcon } from '@heroicons/react/24/outline'; // Outline icons for a lighter look
 
@@ -124,7 +125,7 @@ const MyApplicationsPage = () => {
       setLoading(true);
       setError(null);
       try {
-        const response = await axios.get('/api/applications/my', {
+        const response = await axiosInstance.get('/api/applications/my', {
           withCredentials: true, // Important for sending cookies/auth token
         });
         setApplications(response.data);

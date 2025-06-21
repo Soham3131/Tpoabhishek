@@ -1,11 +1,9 @@
 const User = require("../models/User");
 
-// @desc    Get all users (for admin dashboard)
-// @route   GET /api/admin/users
-// @access  Private (Admin only)
+
 exports.getAllUsers = async (req, res) => {
   try {
-    // Fetch all users, but exclude their password and OTP details for security
+
     const users = await User.find().select("-password -otp -otpExpires");
     res.status(200).json(users);
   } catch (error) {
@@ -14,9 +12,7 @@ exports.getAllUsers = async (req, res) => {
   }
 };
 
-// @desc    Delete a user by ID (for admin dashboard)
-// @route   DELETE /api/admin/users/:id
-// @access  Private (Admin only)
+
 exports.deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
@@ -26,13 +22,11 @@ exports.deleteUser = async (req, res) => {
       return res.status(404).json({ msg: "User not found" });
     }
 
-    // Optional: Prevent admin from deleting themselves if you implement a specific admin user
     if (req.user.id === id) {
         return res.status(403).json({ msg: "Admin cannot delete their own account via this interface." });
     }
 
-    await user.deleteOne(); // Use deleteOne for Mongoose 5.x+, remove for Mongoose 6.x+
-    // Or, for Mongoose 6+: await User.findByIdAndDelete(id);
+    await user.deleteOne(); 
 
     res.status(200).json({ msg: "User deleted successfully" });
   } catch (error) {
@@ -41,7 +35,6 @@ exports.deleteUser = async (req, res) => {
   }
 };
 
-// Assuming you already have this if you followed previous steps:
 exports.getAdminDashboardData = async (req, res) => {
   try {
     const totalUsers = await User.countDocuments();

@@ -36,10 +36,7 @@ const allowedOrigins = [
   'http://localhost:3000', // For local development
   'https://tpoabhishek.vercel.app', // Your base Vercel project domain
   'https://tpoabhishek-fg5z.vercel.app', // Your previous specific Vercel deployment
-  'https://tpoabhishek-awtb.vercel.app', // Your latest Vercel deployment URL
-  // Add any other specific Vercel preview URLs you encounter here.
-  // Or, for production, consider a wildcard for vercel.app if deemed secure enough,
-  // or dynamically add origins based on environment variables for more control.
+  'https://tpoabhishek-awtb.vercel.app', 
 ];
 
 // --- CORS Middleware Configuration ---
@@ -86,19 +83,20 @@ app.use("/api/auth", require("./routes/authRoutes"));
 
 // --- CSRF protection instance and GLOBAL APPLICATION ---
 // This middleware MUST come AFTER cookieParser()
+// ... inside csurf configuration
+// In backend/server.js
 const csrfProtection = csurf({
     cookie: {
         key: '_csrf',
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'None', // CRITICAL: Allows cross-site cookie
         httpOnly: true,
-        maxAge: 7 * 24 * 60 * 60 * 1000 // Match your JWT token's expiry for consistent session
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        path: '/',
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
     },
-    value: (req) => req.headers['x-csrf-token'] // Frontend sends token in this header
+    value: (req) => req.headers['x-csrf-token']
 });
 
-// Apply csrfProtection GLOBALLY to all routes that come *after* this point.
-// Since auth routes are already defined, they will NOT be protected by this global middleware.
 app.use(csrfProtection);
 
 
@@ -124,6 +122,7 @@ app.use("/api/jobfairs", require("./routes/jobFairRoutes"));
 app.use("/api/visits", require("./routes/visitRoutes"));
 app.use("/api/workshops", require("./routes/workshopRoutes"));
 app.use("/api/admin", require("./routes/adminRoutes"));
+app.use("/api/podcasts", require("./routes/podcastRoutes"));
 
 
 // --- Global Error Handling Middleware for CSRF Tokens ---

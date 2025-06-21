@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 import axios from "../utils/axios"
-
+import axiosInstance from "../utils/axios"; 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }) => {
     const checkLogin = async () => {
       try {
         // Use axiosInstance to benefit from withCredentials and interceptors
-        const res = await axios.get(`${process.env.REACT_APP_API_URL}/api/auth/me`, {
+        const res = await axiosInstance.get(`${process.env.REACT_APP_API_URL}/api/auth/me`, {
           withCredentials: true, // Crucial for sending cookies
         });
         

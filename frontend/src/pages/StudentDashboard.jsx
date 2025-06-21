@@ -42,7 +42,8 @@ const StudentDashboard = () => {
     { name: "Workshops", link: "/workshops", icon: "🛠️", description: "Develop practical skills in interactive sessions.", iconBg: lighterSteelBlue },
     { name: "Visits", link: "/visits", icon: "🏭", description: "Gain insights from industrial visits.", iconBg: lighterNavyBlue },
     { name: "Job Fairs", link: "/jobfairs", icon: "🤝", description: "Connect with multiple recruiters in one place.", iconBg: lighterOrange },
-  ];
+    { name: "Podcasts with HR", link: "/podcasts", icon: "🎧", description: "Listen to insightful discussions on HR topics.", iconBg: lighterSteelBlue }, // Added Podcasts category
+];
 
   return (
     <div className={`flex flex-col min-h-screen ${lightGrayBackground}`}>
@@ -92,7 +93,7 @@ const StudentDashboard = () => {
           </div>
         </section>
 
-        {/* Popular Categories Section */}
+        {/* egories Section */}
         <section className="py-8">
           <h2 className={`text-3xl font-bold text-center mb-10 ${primaryTextColor}`}>Popular Categories</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

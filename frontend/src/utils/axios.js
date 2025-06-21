@@ -14,6 +14,8 @@ const axiosInstance = axios.create({
   withCredentials: true,
 });
 
+console.log("AxiosInstance baseURL is set to:", axiosInstance.defaults.baseURL); // <--- ADD THIS LINE
+
 axiosInstance.interceptors.request.use(async (config) => {
   const methodsRequiringCsrf = ['post', 'put', 'delete'];
 

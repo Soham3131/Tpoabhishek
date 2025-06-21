@@ -102,8 +102,7 @@ import ContentDetailPage from "./components/ContentDetailPage";
 import MyApplicationsPage from "./pages/MyApplicationsPage";
 import AdminApplicationsPage from "./pages/AdminApplicationsPage";
 
-// NEW IMPORTS for Podcast feature
-import PodcastsPage from "./pages/PodcastsPage"; // Import the new PodcastsPage
+import PodcastsPage from './pages/PodcastsPage';
 import PodcastDetailPage from "./pages/PodcastDetailPage"; // Import the new PodcastDetailPage
 
 
