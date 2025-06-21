@@ -43,6 +43,7 @@ const StudentDashboard = () => {
     { name: "Visits", link: "/visits", icon: "🏭", description: "Gain insights from industrial visits.", iconBg: lighterNavyBlue },
     { name: "Job Fairs", link: "/jobfairs", icon: "🤝", description: "Connect with multiple recruiters in one place.", iconBg: lighterOrange },
     { name: "Podcasts with HR", link: "/podcasts", icon: "🎧", description: "Listen to insightful discussions on HR topics.", iconBg: lighterSteelBlue }, // Added Podcasts category
+   { name: "Your applications", link: "/my-applications", icon: "📋", description: "Track the status of your service requests and view past interactions.", iconBg: "cyan-100" }, // Added Podcasts category
 ];
 
   return (
