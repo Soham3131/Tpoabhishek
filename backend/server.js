@@ -43,6 +43,8 @@ const allowedOrigins = [
 // --- CORS Middleware Configuration ---
 // This must be placed before any other middleware that processes requests.
 app.use(cors({
+
+
   origin: function (origin, callback) {
     if (!origin) return callback(null, true); // Allow requests with no origin (e.g., Postman, mobile apps, same-origin)
     if (allowedOrigins.includes(origin)) {
@@ -52,8 +54,11 @@ app.use(cors({
       return callback(new Error('CORS policy: This origin is not allowed.'));
     }
   },
-  credentials: true, // Crucial: Allows cookies (including JWT token cookie and _csrf cookie) to be sent and received cross-origin
+  credentials: true, 
+  optionsSuccessStatus: 200// Crucial: Allows cookies (including JWT token cookie and _csrf cookie) to be sent and received cross-origin
 }));
+
+app.options("*", cors()); 
 
 // --- File Upload Middleware ---
 // This must be placed before express.json() and express.urlencoded()
@@ -81,6 +86,13 @@ app.use(cookieParser());
 // because they either handle tokens (e.g., JWT) or are session-initiation/termination points.
 app.use("/api/auth", require("./routes/authRoutes"));
 
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", req.headers.origin || "*");
+  res.header("Access-Control-Allow-Credentials", "true");
+  res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE,PATCH,OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization, X-CSRF-Token");
+  next();
+});
 
 // --- CSRF protection instance and GLOBAL APPLICATION ---
 // This middleware MUST come AFTER cookieParser()
