@@ -58,7 +58,6 @@ app.use(cors({
   optionsSuccessStatus: 200// Crucial: Allows cookies (including JWT token cookie and _csrf cookie) to be sent and received cross-origin
 }));
 
-app.options("*", cors()); 
 
 // --- File Upload Middleware ---
 // This must be placed before express.json() and express.urlencoded()
