@@ -37,6 +37,7 @@ const allowedOrigins = [
   'https://tpoabhishek.vercel.app', // Your base Vercel project domain
   'https://tpoabhishek-fg5z.vercel.app', // Your previous specific Vercel deployment
   'https://tpoabhishek-awtb.vercel.app', 
+  "https://www.trainingandplacementcell.com"
 ];
 
 // --- CORS Middleware Configuration ---
