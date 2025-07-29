@@ -1,6 +1,6 @@
 import axios from "axios";
 const baseURL = process.env.REACT_APP_API_URL;
-console.log(process.env.REACT_APP_API_URL);
+// console.log(process.env.REACT_APP_API_URL);
 
 
 
@@ -14,7 +14,7 @@ const axiosInstance = axios.create({
   withCredentials: true,
 });
 
-console.log("AxiosInstance baseURL is set to:", axiosInstance.defaults.baseURL); // <--- ADD THIS LINE
+// console.log("AxiosInstance baseURL is set to:", axiosInstance.defaults.baseURL); // <--- ADD THIS LINE
 
 axiosInstance.interceptors.request.use(async (config) => {
   const methodsRequiringCsrf = ['post', 'put', 'delete'];
@@ -26,11 +26,11 @@ axiosInstance.interceptors.request.use(async (config) => {
   const shouldAddCsrfHeader = methodsRequiringCsrf.includes(config.method) && !isAuthRoute;
 
   // Debugging logs (keep temporarily)
-  console.log('Axios Interceptor Debug:');
-  console.log('  Request URL:', config.url);
-  console.log('  Request Method:', config.method);
-  console.log('  Is Auth Route:', isAuthRoute);
-  console.log('  Should Add CSRF Header:', shouldAddCsrfHeader);
+  // console.log('Axios Interceptor Debug:');
+  // // console.log('  Request URL:', config.url);
+  // console.log('  Request Method:', config.method);
+  // console.log('  Is Auth Route:', isAuthRoute);
+  // console.log('  Should Add CSRF Header:', shouldAddCsrfHeader);
 
   if (shouldAddCsrfHeader) {
     try {
