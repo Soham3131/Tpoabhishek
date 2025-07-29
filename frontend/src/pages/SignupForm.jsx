@@ -1,147 +1,4 @@
-// import React, { useState } from "react";
-// import { useNavigate, Link } from "react-router-dom";
-// import { registerUser, verifyUserOtp } from "../services/authService";
-// import { useAuth } from "../context/AuthContext"; // Import useAuth
-// import logo from "../assets/logo.png"
-// import bg from "../assets/bg.png"
 
-// const Signup = () => {
-//   const [formData, setFormData] = useState({
-//     name: "",
-//     email: "",
-//     password: "",
-//     role: "user", // Default to 'user' to match backend enum
-//   });
-//   const [otp, setOtp] = useState("");
-//   const [otpSent, setOtpSent] = useState(false); // To control visibility of OTP form
-//   const [message, setMessage] = useState(null); // For success messages
-//   const [error, setError] = useState(null); // To display errors
-//   const [loading, setLoading] = useState(false); // To show loading state
-
-//   const navigate = useNavigate();
-//   const { setUser } = useAuth(); // <--- CHANGE: Get setUser from context, NOT setIsLoggedIn
-
-//   const handleChange = (e) => {
-//     setFormData({ ...formData, [e.target.name]: e.target.value });
-//   };
-
-//   const handleOtpChange = (e) => {
-//     setOtp(e.target.value);
-//   };
-
-//   const handleRegisterSubmit = async (e) => {
-//     e.preventDefault();
-//     setError(null);
-//     setMessage(null);
-//     setLoading(true);
-//     try {
-//       await registerUser(formData);
-
-//       setOtpSent(true); // Switch to OTP input view
-//       setMessage("OTP has been sent to your email. Please check your inbox.");
-
-//     } catch (error) {
-//       setError(error.response?.data?.msg || "Signup failed. Please try again.");
-//       console.error("Signup error:", error);
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const handleOtpSubmit = async (e) => {
-//     e.preventDefault();
-//     setError(null);
-//     setMessage(null);
-//     setLoading(true);
-//     try {
-//       const res = await verifyUserOtp(formData.email, otp);
-      
-//       if (res.status === 200) { // Assuming 200 OK means OTP verified
-//         setMessage("Account verified successfully! You can now log in.");
-//         // If your backend verify OTP also logs them in, you can uncomment this:
-//         // setUser(res.data.user); // <--- Potentially set user here if auto-login
-//         navigate("/login"); 
-//       } else {
-//         setError(res.data?.msg || "OTP verification failed.");
-//       }
-//     } catch (error) {
-//       setError(error.response?.data?.msg || "OTP verification failed. Please check your OTP.");
-//       console.error("OTP verification error:", error);
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   return (
-//     <div className="min-h-screen bg-[#ECEFF1] flex items-center justify-center">
-//       <form
-//         className="bg-white p-8 rounded shadow-md w-full max-w-md"
-//         onSubmit={otpSent ? handleOtpSubmit : handleRegisterSubmit} // Conditional submit handler
-//       >
-//         <h2 className="text-2xl font-bold mb-4 text-center text-primary">
-//           {otpSent ? "Verify Your Email" : "Sign Up"}
-//         </h2>
-
-//         {message && <p className="text-green-500 text-sm mb-4 text-center">{message}</p>}
-//         {error && <p className="text-red-500 text-sm mb-4 text-center">{error}</p>}
-//         {loading && <p className="text-blue-500 text-sm mb-4 text-center">Loading...</p>}
-
-//         {!otpSent ? ( // Show registration form
-//           <>
-//             <input name="name" placeholder="Name" className="input" onChange={handleChange} required />
-//             <input name="email" placeholder="Email" type="email" className="input" onChange={handleChange} required />
-//             <input name="password" placeholder="Password" type="password" className="input" onChange={handleChange} required />
-
-//             <label className="block mb-2 mt-4 text-sm font-medium text-gray-700">Register As:</label>
-//             <select name="role" value={formData.role} onChange={handleChange} className="input">
-//               <option value="user">Student</option>
-//               <option value="recruiter">Recruiter</option>
-//               <option value="admin">Admin</option>
-//             </select>
-
-//             <button
-//               type="submit"
-//               className="mt-6 w-full bg-accent text-white py-2 rounded hover:bg-orange-500 transition"
-//               disabled={loading}
-//             >
-//               Sign Up
-//             </button>
-//           </>
-//         ) : ( // Show OTP verification form
-//           <>
-//             <p className="text-gray-600 mb-4 text-center">
-//               An OTP has been sent to <span className="font-semibold">{formData.email}</span>. Please enter it below to verify your account.
-//             </p>
-//             <input
-//               name="otp"
-//               placeholder="Enter OTP"
-//               type="text"
-//               className="input"
-//               value={otp}
-//               onChange={handleOtpChange}
-//               required
-//               minLength="6"
-//               maxLength="6"
-//             />
-//             <button
-//               type="submit"
-//               className="mt-6 w-full bg-primary text-white py-2 rounded hover:bg-[#2a4568] transition"
-//               disabled={loading}
-//             >
-//               Verify OTP
-//             </button>
-//           </>
-//         )}
-
-//         <p className="mt-4 text-center text-gray-600 text-sm">
-//           Already have an account? <Link to="/login" className="text-primary hover:underline">Login</Link>
-//         </p>
-//       </form>
-//     </div>
-//   );
-// };
-
-// export default Signup;
 
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
@@ -217,8 +74,7 @@ const Signup = () => {
     }
   };
 
-  // Define color variables based on the Login page's design
-  const formCardBackgroundColor = "bg-[#1C1D2E]"; // Slightly lighter than main bg for the form card
+  const formCardBackgroundColor = "bg-[#1C1D2E]"; 
   const textColor = "text-white";
   const inputBgColor = "bg-[#25263B]"; // Input field background color
   const placeholderColor = "placeholder-[#A0A0A0]";
@@ -236,7 +92,7 @@ const Signup = () => {
       className={`min-h-screen flex items-center justify-center p-4 bg-cover bg-center`}
       style={{ backgroundImage: `url(${bg})` }}
     >
-      {/* Signup Form Card - placed on the left side, adjusted for mobile responsiveness and center alignment for small screens */}
+    
       <form
         className={`${formCardBackgroundColor} p-8 rounded-lg shadow-2xl w-full max-w-md border ${inputBorderColor} mx-auto lg:ml-8 lg:mr-auto transition-all duration-500 ease-in-out`}
         onSubmit={otpSent ? handleOtpSubmit : handleRegisterSubmit}
@@ -317,8 +173,10 @@ const Signup = () => {
                 className={`w-full p-3 rounded-md ${inputBgColor} ${textColor} ${inputBorderColor} border focus:outline-none focus:ring-2 focus:ring-[#6A5ACD] transition-all duration-200`}
               >
                 <option value="user">Student</option>
-                {/* <option value="recruiter">Recruiter</option> */}
-                <option value="admin">Admin</option>
+                {/* <option value="recruiter">Recruiter</option>
+                 <option value="admin">Admin</option>
+                */}
+               
               </select>
             </div>
 
