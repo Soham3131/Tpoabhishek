@@ -14,16 +14,27 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const checkLogin = async () => {
       try {
-        // Use axiosInstance to benefit from withCredentials and interceptors
+        
         const res = await axiosInstance.get(`${process.env.REACT_APP_API_URL}/api/auth/me`, {
           withCredentials: true, // Crucial for sending cookies
         });
+
+         // --- ADD THESE LOGS1 ---
+            console.log("AUTHCONTEXT: /api/auth/me successful response:", res);
+            console.log("AUTHCONTEXT: User from /api/auth/me:", res.data);
+            // --- END ADDED LOGS ---
+
+
         
         // If successful, user data is in res.data
         setUser(res.data); // Set the user object
       } catch (err) {
-        // If 401 or any error, user is not logged in or token is invalid
-        console.error("AuthContext checkLogin error:", err);
+        
+       // --- ADD THESE LOGS1 ---
+            console.error("AuthContext checkLogin error:", err.response?.data || err.message || err);
+            console.error("AuthContext checkLogin full error object:", err);
+            // --- END ADDED LOGS ---
+
         setUser(null); // Clear user data
       }
     };

@@ -5,6 +5,13 @@ const User = require("../models/User");
 const protect = async (req, res, next) => {
   let token;
 
+
+   // --- ADD THESE LOGS1 ---
+    console.log("\nPROTECT MIDDLEWARE: Checking authentication for request...");
+    console.log("PROTECT MIDDLEWARE: req.cookies.token:", req.cookies.token);
+    // --- END ADDED LOGS ---
+
+
   if (req.cookies.token) {
     try {
       token = req.cookies.token;

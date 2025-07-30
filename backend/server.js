@@ -79,6 +79,17 @@ app.use(express.urlencoded({ extended: false }));
 // This must be placed before any middleware that relies on cookies, such as csurf.
 app.use(cookieParser());
 
+//logs1
+app.use((req, res, next) => {
+    console.log(`\nINCOMING REQUEST: ${req.method} ${req.originalUrl}`);
+    console.log('   Request Origin:', req.headers.origin);
+    console.log('   Request Referer:', req.headers.referer);
+    console.log('   Request Host:', req.headers.host);
+    console.log('   Request Headers (full):', JSON.stringify(req.headers, null, 2)); // Stringify for full view
+    console.log('   Parsed Cookies (req.cookies):', req.cookies); // This is crucial
+    next();
+});
+
 
 
 app.use("/api/auth", require("./routes/authRoutes"));

@@ -18,12 +18,12 @@ const setAuthCookies = (res, userId, userRole) => {
   };
 
   if (process.env.NODE_ENV === 'production') {
-    // For production (HTTPS), require Secure and SameSite: 'None' for cross-origin requests
+    
     cookieOptions.secure = true;
     cookieOptions.sameSite = 'None';
   } else {
  
-    cookieOptions.secure = false; // Explicitly set to false for http
+    cookieOptions.secure = false; 
     cookieOptions.sameSite = 'Lax';
   }
 
@@ -92,6 +92,10 @@ exports.register = async (req, res) => {
 exports.login = async (req, res) => {
   const { email, password } = req.body;
 
+     // --- ADD THESE LOGS1 ---
+    console.log("AUTH CONTROLLER: Attempting login for email:", email);
+    // --- END ADDED LOGS ---
+
   try {
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ msg: "User not found" });
@@ -106,6 +110,11 @@ exports.login = async (req, res) => {
     if (!isMatch) return res.status(401).json({ msg: "Invalid credentials" });
 
     setAuthCookies(res, user._id, user.role);
+
+     // --- ADD THIS LOGS1 AFTER setAuthCookies ---
+        console.log("AUTH CONTROLLER: Login successful. Cookie set via setAuthCookies.");
+        console.log("AUTH CONTROLLER: Headers sent in login response (looking for Set-Cookie):", res.getHeaders());
+        // --- END ADDED LOG ---
 
     const { password: _, ...userData } = user._doc;
     res.status(200).json({ user: userData });

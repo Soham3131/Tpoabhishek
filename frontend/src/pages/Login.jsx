@@ -28,6 +28,11 @@ const Login = () => {
         withCredentials: true,
       });
 
+      // --- ADD THESE LOGS1 ---
+        console.log("LOGIN SUCCESSFUL RESPONSE (Login.jsx):", res);
+        console.log("User data from login response:", res.data.user);
+        // --- END ADDED LOGS ---
+
       setUser(res.data.user);
 
       const userRole = res.data.user.role;
@@ -38,7 +43,9 @@ const Login = () => {
       }
     } catch (error) {
       setError(error.response?.data?.msg || "Login failed. Please check your credentials.");
-      console.error("Login error:", error);
+
+       console.error("LOGIN ERROR (Login.jsx):", error.response || error.message || error);
+        
     } finally {
       setLoading(false);
     }
