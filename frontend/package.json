@@ -17,6 +17,7 @@
     "express": "^5.1.0",
     "framer-motion": "^12.15.0",
     "jsonwebtoken": "^9.0.2",
+    "jwt-decode": "^4.0.0",
     "link": "^2.1.1",
     "lucide-react": "^0.483.0",
     "mongoose": "^8.15.1",
@@ -32,12 +33,11 @@
     "react-toastify": "^11.0.5",
     "web-vitals": "^2.1.4"
   },
- "scripts": {
-  "start": "react-scripts start",
-  "server": "cd ../backend && npm start",
-  "dev": "concurrently -n \"client,server\" -c \"bgBlue,bgYellow\" \"npm start\" \"npm run server\""
-},
-
+  "scripts": {
+    "start": "react-scripts start",
+    "server": "cd ../backend && npm start",
+    "dev": "concurrently -n \"client,server\" -c \"bgBlue,bgYellow\" \"npm start\" \"npm run server\""
+  },
   "eslintConfig": {
     "extends": [
       "react-app",
