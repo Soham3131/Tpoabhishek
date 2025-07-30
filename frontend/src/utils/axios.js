@@ -87,6 +87,8 @@
 
 // export default axiosInstance;
 
+
+
 import axios from "axios";
 
 const baseURL = process.env.REACT_APP_API_URL;
@@ -97,10 +99,7 @@ if (!baseURL) {
 
 const axiosInstance = axios.create({
     baseURL,
-     withCredentials: true, // You can keep this if you still want CSRF cookies for POST/PUT/DELETE
-                               // and are okay with the browser handling them.
-                               // If you want pure bearer token, you can remove it,
-                               // but CSRF often uses HttpOnly cookies.
+    withCredentials: true, // <-- Keep this uncommented and true
 });
 
 // Add a request interceptor to add the Authorization header
@@ -113,41 +112,16 @@ axiosInstance.interceptors.request.use(async (config) => {
         // console.log('Axios Interceptor: No JWT token found in localStorage.');
     }
 
-    // --- YOUR EXISTING CSRF LOGIC REMAINS (if you want CSRF protection) ---
-    // const methodsRequiringCsrf = ['post', 'put', 'delete'];
-    // const isAuthRoute = config.url.includes('/api/auth/');
-    // const shouldAddCsrfHeader = methodsRequiringCsrf.includes(config.method) && !isAuthRoute;
+    // --- IMPORTANT: Ensure the final 'return config;' is NOT commented out ---
+    // The previous CSRF logic block was entirely commented out.
+    // If you decided to completely remove CSRF, this is how the interceptor should look.
 
-    // console.log('Axios Interceptor Debug:');
-    // console.log('  Request URL:', config.url);
-    // console.log('  Request Method:', config.method);
-    // console.log('  Is Auth Route:', isAuthRoute);
-    // console.log('  Should Add CSRF Header:', shouldAddCsrfHeader);
+    // If you plan to re-enable CSRF later, you'll need to uncomment the entire block
+    // and ensure its own 'return config;' is correctly placed within that block,
+    // and that the main interceptor's 'return config;' is also present.
+    // For now, assuming you want CSRF removed, this is the correct structure:
 
-    // if (shouldAddCsrfHeader) {
-    //     try {
-    //         const csrfResponse = await axios.get(`${baseURL}/csrf-token`); // Use axios directly, no withCredentials needed if CSRF cookie is HttpOnly and same-site
-                                                                           // If _csrf cookie is also cross-site, you might need withCredentials:true here
-    //         if (!csrfResponse.data || !csrfResponse.data.csrfToken) {
-    //             console.error("CSRF token not found in response from /csrf-token endpoint.");
-    //             throw new Error("CSRF token not found in response.");
-    //         }
-    //         config.headers["X-CSRF-Token"] = csrfResponse.data.csrfToken;
-    //         console.log('  CSRF token successfully added to header:', csrfResponse.data.csrfToken);
-    //         // console.log('  Full config headers before sending request (with CSRF):', config.headers);
-    //     } catch (error) {
-    //         console.error("  Error in CSRF token interception:", error);
-    //     }
-    // } else {
-    //     if (config.headers["X-CSRF-Token"]) {
-    //         delete config.headers["X-CSRF-Token"];
-    //     }
-    //     // console.log('  Skipping CSRF header for this request.');
-    //     // console.log('  Full config headers before sending request (no CSRF):', config.headers);
-    // }
-    // // --- END CSRF LOGIC ---
-
-    // return config;
+    return config; // <-- THIS MUST BE PRESENT AND REACHABLE
 });
 
 export default axiosInstance;
