@@ -114,9 +114,9 @@ axiosInstance.interceptors.request.use(async (config) => {
     }
 
     // --- YOUR EXISTING CSRF LOGIC REMAINS (if you want CSRF protection) ---
-    const methodsRequiringCsrf = ['post', 'put', 'delete'];
-    const isAuthRoute = config.url.includes('/api/auth/');
-    const shouldAddCsrfHeader = methodsRequiringCsrf.includes(config.method) && !isAuthRoute;
+    // const methodsRequiringCsrf = ['post', 'put', 'delete'];
+    // const isAuthRoute = config.url.includes('/api/auth/');
+    // const shouldAddCsrfHeader = methodsRequiringCsrf.includes(config.method) && !isAuthRoute;
 
     // console.log('Axios Interceptor Debug:');
     // console.log('  Request URL:', config.url);
@@ -124,30 +124,30 @@ axiosInstance.interceptors.request.use(async (config) => {
     // console.log('  Is Auth Route:', isAuthRoute);
     // console.log('  Should Add CSRF Header:', shouldAddCsrfHeader);
 
-    if (shouldAddCsrfHeader) {
-        try {
-            const csrfResponse = await axios.get(`${baseURL}/csrf-token`); // Use axios directly, no withCredentials needed if CSRF cookie is HttpOnly and same-site
+    // if (shouldAddCsrfHeader) {
+    //     try {
+    //         const csrfResponse = await axios.get(`${baseURL}/csrf-token`); // Use axios directly, no withCredentials needed if CSRF cookie is HttpOnly and same-site
                                                                            // If _csrf cookie is also cross-site, you might need withCredentials:true here
-            if (!csrfResponse.data || !csrfResponse.data.csrfToken) {
-                console.error("CSRF token not found in response from /csrf-token endpoint.");
-                throw new Error("CSRF token not found in response.");
-            }
-            config.headers["X-CSRF-Token"] = csrfResponse.data.csrfToken;
-            console.log('  CSRF token successfully added to header:', csrfResponse.data.csrfToken);
-            // console.log('  Full config headers before sending request (with CSRF):', config.headers);
-        } catch (error) {
-            console.error("  Error in CSRF token interception:", error);
-        }
-    } else {
-        if (config.headers["X-CSRF-Token"]) {
-            delete config.headers["X-CSRF-Token"];
-        }
-        // console.log('  Skipping CSRF header for this request.');
-        // console.log('  Full config headers before sending request (no CSRF):', config.headers);
-    }
-    // --- END CSRF LOGIC ---
+    //         if (!csrfResponse.data || !csrfResponse.data.csrfToken) {
+    //             console.error("CSRF token not found in response from /csrf-token endpoint.");
+    //             throw new Error("CSRF token not found in response.");
+    //         }
+    //         config.headers["X-CSRF-Token"] = csrfResponse.data.csrfToken;
+    //         console.log('  CSRF token successfully added to header:', csrfResponse.data.csrfToken);
+    //         // console.log('  Full config headers before sending request (with CSRF):', config.headers);
+    //     } catch (error) {
+    //         console.error("  Error in CSRF token interception:", error);
+    //     }
+    // } else {
+    //     if (config.headers["X-CSRF-Token"]) {
+    //         delete config.headers["X-CSRF-Token"];
+    //     }
+    //     // console.log('  Skipping CSRF header for this request.');
+    //     // console.log('  Full config headers before sending request (no CSRF):', config.headers);
+    // }
+    // // --- END CSRF LOGIC ---
 
-    return config;
+    // return config;
 });
 
 export default axiosInstance;

@@ -155,17 +155,17 @@ exports.logout = (req, res) => {
   // --- MODIFIED: No longer clearing 'token' cookie as it's not HttpOnly ---
   // You can still keep CSRF cookie clearing if you decide to keep CSRF protection
   // for your backend, which uses a separate cookie.
-  res.cookie('_csrf', '', {
-    expires: new Date(0), // Expire immediately
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'None', // Ensure this matches production setting if still using CSRF
-  });
-  // If you also had a separate XSRF-TOKEN cookie for client-side, clear it too
-  res.cookie('XSRF-TOKEN', '', {
-    expires: new Date(0),
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'None',
-  });
+  // res.cookie('_csrf', '', {
+  //   expires: new Date(0), // Expire immediately
+  //   secure: process.env.NODE_ENV === 'production',
+  //   sameSite: 'None', // Ensure this matches production setting if still using CSRF
+  // });
+  // // If you also had a separate XSRF-TOKEN cookie for client-side, clear it too
+  // res.cookie('XSRF-TOKEN', '', {
+  //   expires: new Date(0),
+  //   secure: process.env.NODE_ENV === 'production',
+  //   sameSite: 'None',
+  // });
   res.status(200).json({ msg: 'Logged out successfully' });
 };
 

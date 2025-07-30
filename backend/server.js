@@ -7,7 +7,7 @@ dotenv.config(); // Load environment variables first.
 const connectDB = require("./config/db");
 const cors = require("cors");
 const cookieParser = require('cookie-parser');
-const csurf = require('csurf'); // Import csurf
+// const csurf = require('csurf'); // Import csurf
 const fileUpload = require("express-fileupload");
 const cloudinary = require('cloudinary').v2; // Import cloudinary here
 
@@ -102,25 +102,25 @@ app.use((req, res, next) => {
   next();
 });
 
-const csrfProtection = csurf({
-    cookie: {
-        key: '_csrf',
-        httpOnly: true,
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-        path: '/',
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
-    },
-    value: (req) => req.headers['x-csrf-token']
-});
+// const csrfProtection = csurf({
+//     cookie: {
+//         key: '_csrf',
+//         httpOnly: true,
+//         maxAge: 7 * 24 * 60 * 60 * 1000,
+//         path: '/',
+//         secure: process.env.NODE_ENV === 'production',
+//         sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
+//     },
+//     value: (req) => req.headers['x-csrf-token']
+// });
 
-app.use(csrfProtection);
+// app.use(csrfProtection);
 
 
 
-app.get('/csrf-token', (req, res) => {
-  res.json({ csrfToken: req.csrfToken() });
-});
+// app.get('/csrf-token', (req, res) => {
+//   res.json({ csrfToken: req.csrfToken() });
+// });
 
 
 
@@ -141,20 +141,20 @@ app.use("/api/podcasts", require("./routes/podcastRoutes"));
 
 // --- Global Error Handling Middleware for CSRF Tokens ---
 // This catches specific errors thrown by csurf middleware (e.g., if token is missing or invalid).
-app.use((err, req, res, next) => {
-  if (err.code === 'EBADCSRFTOKEN') {
-    console.error('SERVER: EBADCSRFTOKEN caught for:', {
-      method: req.method,
-      path: req.path,
-      headers: req.headers['x-csrf-token'] ? 'X-CSRF-Token present' : 'X-CSRF-Token absent',
-      cookies: req.cookies // Log received cookies for debugging
-    });
-    // Respond with 403 Forbidden and a message
-    return res.status(403).json({ msg: 'Invalid CSRF token. Please refresh the page or try again.' });
-  }
-  // Pass other errors to the next error handling middleware (if any)
-  next(err);
-});
+// app.use((err, req, res, next) => {
+//   if (err.code === 'EBADCSRFTOKEN') {
+//     console.error('SERVER: EBADCSRFTOKEN caught for:', {
+//       method: req.method,
+//       path: req.path,
+//       headers: req.headers['x-csrf-token'] ? 'X-CSRF-Token present' : 'X-CSRF-Token absent',
+//       cookies: req.cookies // Log received cookies for debugging
+//     });
+//     // Respond with 403 Forbidden and a message
+//     return res.status(403).json({ msg: 'Invalid CSRF token. Please refresh the page or try again.' });
+//   }
+//   // Pass other errors to the next error handling middleware (if any)
+//   next(err);
+// });
 
 
 // --- Server Listener ---

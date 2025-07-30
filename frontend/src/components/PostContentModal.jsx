@@ -179,12 +179,12 @@ const PostContentModal = ({ contentType, onClose }) => {
             setTimeout(onClose, 1500);
         } catch (err) {
             console.error("Error posting content:", err);
-            if (err.response?.status === 403 && err.response?.data?.msg?.includes('CSRF token')) {
-                setError('Invalid CSRF token. Please refresh the page, log in again, and try posting.');
-            } else {
-                setError(err.response?.data?.msg || `Failed to post ${contentType}. Please check inputs.`);
+            // --- MODIFIED: Update error message logic ---
+            // The specific CSRF token error will no longer be thrown by the backend,
+            // so you can simplify this error handling.
+            setError(err.response?.data?.msg || `Failed to post ${contentType}. Please check inputs.`);
             }
-        } finally {
+         finally {
             setLoading(false);
         }
     };
