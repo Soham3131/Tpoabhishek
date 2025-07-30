@@ -8,31 +8,29 @@ const { sendEmail } = require("../services/emailService");
 const { uploadImageToCloudinary } = require("../utils/uploadImage"); // Ensure this path is correct
 
 
-const setAuthCookies = (res, userId, userRole) => {
-  const token = generateToken(userId, userRole);
+// const setAuthCookies = (res, userId, userRole) => {
+//   const token = generateToken(userId, userRole);
 
-  const cookieOptions = {
-    httpOnly: true,
-    maxAge: 7 * 24 * 60 * 60 * 1000,
-    path: '/', 
-  };
+//   const cookieOptions = {
+//     httpOnly: true,
+//     maxAge: 7 * 24 * 60 * 60 * 1000,
+//     path: '/', 
+//   };
 
-  if (process.env.NODE_ENV === 'production') {
-    
-    cookieOptions.secure = true;
-    cookieOptions.sameSite = 'None';
-  } else {
- 
-    cookieOptions.secure = false; 
-    cookieOptions.sameSite = 'Lax';
-  }
+//   if (process.env.NODE_ENV === 'production') {
+//     
+//     cookieOptions.secure = true;
+//     cookieOptions.sameSite = 'None';
+//   } else {
+//  
+//     cookieOptions.secure = false; 
+//     cookieOptions.sameSite = 'Lax';
+//   }
 
-  res.cookie('token', token, cookieOptions);
-};
+//   res.cookie('token', token, cookieOptions);
+// };
 
-// @desc    Register new user (sends OTP for verification)
-// @route   POST /api/auth/signup
-// @access  Public
+
 exports.register = async (req, res) => {
   const { name, email, password, role } = req.body;
   console.log("Register: Received request for email:", email);
@@ -89,53 +87,80 @@ exports.register = async (req, res) => {
 // @desc    Authenticate a user
 // @route   POST /api/auth/login
 // @access  Public
+// exports.login = async (req, res) => {
+//   const { email, password } = req.body;
+
+//      // --- ADD THESE LOGS1 ---
+//     console.log("AUTH CONTROLLER: Attempting login for email:", email);
+//     // --- END ADDED LOGS ---
+
+//   try {
+//     const user = await User.findOne({ email });
+//     if (!user) return res.status(404).json({ msg: "User not found" });
+
+//     if (!user.isVerified) {
+//         console.log("Login: User not verified for email:", email);
+//         return res.status(401).json({ msg: "Account not verified. Please verify your email with the OTP sent during signup." });
+//     }
+
+//     const isMatch = await bcrypt.compare(password, user.password);
+
+//     if (!isMatch) return res.status(401).json({ msg: "Invalid credentials" });
+
+//     setAuthCookies(res, user._id, user.role);
+
+//      // --- ADD THIS LOGS1 AFTER setAuthCookies ---
+//         console.log("AUTH CONTROLLER: Login successful. Cookie set via setAuthCookies.");
+//         console.log("AUTH CONTROLLER: Headers sent in login response (looking for Set-Cookie):", res.getHeaders());
+//         // --- END ADDED LOG ---
+
+//     const { password: _, ...userData } = user._doc;
+//     res.status(200).json({ user: userData });
+//   } catch (err) {
+//     console.error("Login error:", err);
+//     res.status(500).json({ msg: "Server Error" });
+//   }
+// };
+
 exports.login = async (req, res) => {
   const { email, password } = req.body;
-
-     // --- ADD THESE LOGS1 ---
-    console.log("AUTH CONTROLLER: Attempting login for email:", email);
-    // --- END ADDED LOGS ---
 
   try {
     const user = await User.findOne({ email });
     if (!user) return res.status(404).json({ msg: "User not found" });
 
     if (!user.isVerified) {
-        console.log("Login: User not verified for email:", email);
-        return res.status(401).json({ msg: "Account not verified. Please verify your email with the OTP sent during signup." });
+      console.log("Login: User not verified for email:", email);
+      return res.status(401).json({ msg: "Account not verified. Please verify your email with the OTP sent during signup." });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
 
     if (!isMatch) return res.status(401).json({ msg: "Invalid credentials" });
 
-    setAuthCookies(res, user._id, user.role);
+    // --- MODIFIED: Generate token and send in response body ---
+    const token = generateToken(user._id, user.role); // Generate the JWT
 
-     // --- ADD THIS LOGS1 AFTER setAuthCookies ---
-        console.log("AUTH CONTROLLER: Login successful. Cookie set via setAuthCookies.");
-        console.log("AUTH CONTROLLER: Headers sent in login response (looking for Set-Cookie):", res.getHeaders());
-        // --- END ADDED LOG ---
+    const { password: _, ...userData } = user._doc; // Exclude password from user data
+    res.status(200).json({ user: userData, token: token }); // Send user data AND the token
+    // --- END MODIFIED ---
 
-    const { password: _, ...userData } = user._doc;
-    res.status(200).json({ user: userData });
   } catch (err) {
     console.error("Login error:", err);
     res.status(500).json({ msg: "Server Error" });
   }
 };
 
-// @desc    Log out user / clear cookie
-// @route   POST /api/auth/logout
-// @access  Private
 exports.logout = (req, res) => {
-  // Clear the token cookie
-  res.cookie('token', '', {
-    httpOnly: true,
+  // --- MODIFIED: No longer clearing 'token' cookie as it's not HttpOnly ---
+  // You can still keep CSRF cookie clearing if you decide to keep CSRF protection
+  // for your backend, which uses a separate cookie.
+  res.cookie('_csrf', '', {
     expires: new Date(0), // Expire immediately
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'None',
+    sameSite: 'None', // Ensure this matches production setting if still using CSRF
   });
-  // Clear the XSRF-TOKEN cookie too (optional, but good practice for full logout)
+  // If you also had a separate XSRF-TOKEN cookie for client-side, clear it too
   res.cookie('XSRF-TOKEN', '', {
     expires: new Date(0),
     secure: process.env.NODE_ENV === 'production',
@@ -143,6 +168,23 @@ exports.logout = (req, res) => {
   });
   res.status(200).json({ msg: 'Logged out successfully' });
 };
+
+// exports.logout = (req, res) => {
+//   // Clear the token cookie
+//   res.cookie('token', '', {
+//     httpOnly: true,
+//     expires: new Date(0), // Expire immediately
+//     secure: process.env.NODE_ENV === 'production',
+//     sameSite: 'None',
+//   });
+//   // Clear the XSRF-TOKEN cookie too (optional, but good practice for full logout)
+//   res.cookie('XSRF-TOKEN', '', {
+//     expires: new Date(0),
+//     secure: process.env.NODE_ENV === 'production',
+//     sameSite: 'None',
+//   });
+//   res.status(200).json({ msg: 'Logged out successfully' });
+// };
 
 // @desc    Request OTP for password reset
 // @route   POST /api/auth/forgot-password
