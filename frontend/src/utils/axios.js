@@ -97,7 +97,7 @@ if (!baseURL) {
 
 const axiosInstance = axios.create({
     baseURL,
-    // withCredentials: true, // You can keep this if you still want CSRF cookies for POST/PUT/DELETE
+     withCredentials: true, // You can keep this if you still want CSRF cookies for POST/PUT/DELETE
                                // and are okay with the browser handling them.
                                // If you want pure bearer token, you can remove it,
                                // but CSRF often uses HttpOnly cookies.

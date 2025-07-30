@@ -161,7 +161,7 @@ exports.logout = (req, res) => {
   //   sameSite: 'None', // Ensure this matches production setting if still using CSRF
   // });
   // // If you also had a separate XSRF-TOKEN cookie for client-side, clear it too
-  // res.cookie('XSRF-TOKEN', '', {
+  // res.cookie('XSRF-TaOKEN', '', {
   //   expires: new Date(0),
   //   secure: process.env.NODE_ENV === 'production',
   //   sameSite: 'None',
