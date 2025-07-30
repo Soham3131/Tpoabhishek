@@ -80,9 +80,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 
-// --- Routes that DO NOT need CSRF protection (place BEFORE csurf middleware) ---
-// Authentication routes typically do not require CSRF tokens on login/logout
-// because they either handle tokens (e.g., JWT) or are session-initiation/termination points.
+
 app.use("/api/auth", require("./routes/authRoutes"));
 
 app.use((req, res, next) => {
