@@ -37,7 +37,7 @@ axiosInstance.interceptors.request.use(async (config) => {
      
 const csrfResponse = await fetch(`${process.env.REACT_APP_API_URL}/csrf-token`, {
   method: 'GET',
-  credentials: 'include'
+  withCredentials: true
 });
 
       if (!csrfResponse.ok) {

@@ -93,10 +93,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// --- CSRF protection instance and GLOBAL APPLICATION ---
-// This middleware MUST come AFTER cookieParser()
-// ... inside csurf configuration
-// In backend/server.js
 const csrfProtection = csurf({
     cookie: {
         key: '_csrf',
@@ -112,18 +108,15 @@ const csrfProtection = csurf({
 app.use(csrfProtection);
 
 
-// --- Dedicated endpoint to Get CSRF Token ---
-// This endpoint will now automatically have req.csrfToken() available
-// because it passes through the global csrfProtection.
-// No need to pass csrfProtection again here.
+
 app.get('/csrf-token', (req, res) => {
   res.json({ csrfToken: req.csrfToken() });
 });
 
 
-// --- Import and Mount Application Routes ---
-// All routes defined below this point will be protected by the global csrfProtection.
-// No need to apply csrfProtection individually here anymore.
+
+
+
 app.use("/api/applications", require("./routes/applicationRoutes"));
 app.use("/api/resume", require("./routes/resumeRoutes"));
 app.use("/api/placements", require("./routes/placementRoutes"));
