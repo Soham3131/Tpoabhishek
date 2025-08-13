@@ -105,8 +105,10 @@ exports.register = async (req, res) => {
     const getWelcomeEmailHTML = (otp) => `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
         <h2 style="color: #4CAF50;">Welcome to TPO Abhishek, ${name}!</h2>
-        <p>Thank you for joining the Training & Placement Cell. To complete your registration, please verify your account using the OTP below:</p>
-        <div style="background: #f4f4f4; padding: 15px; text-align: center; font-size: 20px; font-weight: bold; letter-spacing: 2px;">
+        <p>Thank you for joining the Training & Placement Cell. 
+        To complete your registration, please verify your account using the OTP below:</p>
+        <div style="background: #f4f4f4; padding: 15px; text-align: center; 
+          font-size: 20px; font-weight: bold; letter-spacing: 2px;">
           ${otp}
         </div>
         <p>This code will expire in <b>10 minutes</b>.</p>
@@ -123,19 +125,19 @@ exports.register = async (req, res) => {
         console.log("Register: User already exists and is verified for email:", email);
         return res.status(400).json({ msg: "Email already registered and verified. Please login." });
       } else {
-        console.log("Register: User exists but not verified. Attempting to resend OTP to:", email);
+        console.log("Register: User exists but not verified. Resending OTP to:", email);
         const otp = generateOTP();
         const otpExpires = getExpiry();
         existingUser.otp = otp;
         existingUser.otpExpires = otpExpires;
         await existingUser.save();
 
-        // Send welcome email with OTP
-        await sendEmail(
-          email,
-          "Welcome to TPO Abhishek - Verify Your Account",
-          getWelcomeEmailHTML(otp)
-        );
+        // ✅ Send HTML email
+        await sendEmail({
+          to: email,
+          subject: "Welcome to TPO Abhishek - Verify Your Account",
+          html: getWelcomeEmailHTML(otp) // FIXED
+        });
 
         console.log("Register: Resent OTP successfully.");
         return res.status(200).json({ msg: "Account already registered but not verified. New OTP sent to your email." });
@@ -147,7 +149,6 @@ exports.register = async (req, res) => {
 
     const otp = generateOTP();
     const otpExpires = getExpiry();
-
     console.log("Register: Generated OTP:", otp, "Expires:", otpExpires);
 
     // Create new user
@@ -164,15 +165,14 @@ exports.register = async (req, res) => {
 
     console.log("Register: New user created in DB:", user._id);
 
-    // Send welcome email with OTP
-    await sendEmail(
-      email,
-      "Welcome to TPO Abhishek - Verify Your Account",
-      getWelcomeEmailHTML(otp)
-    );
+    // ✅ Send HTML email
+    await sendEmail({
+      to: email,
+      subject: "Welcome to TPO Abhishek - Verify Your Account",
+      html: getWelcomeEmailHTML(otp) // FIXED
+    });
 
     console.log("Register: Email sent successfully for new user.");
-
     res.status(200).json({ msg: "OTP sent to your email. Please verify your account." });
 
   } catch (err) {
@@ -180,6 +180,7 @@ exports.register = async (req, res) => {
     res.status(500).json({ msg: "Server Error", detailedError: err.message });
   }
 };
+
 
 exports.login = async (req, res) => {
   const { email, password } = req.body;
