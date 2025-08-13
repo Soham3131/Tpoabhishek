@@ -1,3 +1,43 @@
+/* @tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+
+.input-field {
+  @apply w-full p-2 border border-gray-300 rounded-md text-sm mb-1 focus:ring-primary focus:border-primary;
+}
+
+.btn-add {
+  @apply bg-blue-500 text-white text-xs px-3 py-1 rounded-md hover:bg-blue-600 transition flex items-center justify-center;
+}
+
+.btn-remove {
+  @apply text-red-500 hover:text-red-700 text-sm flex items-center;
+}
+
+.btn-icon-remove {
+  @apply text-red-500 hover:text-red-700 p-1 rounded-full;
+} */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -23,17 +63,29 @@
 
 /* Custom styles for UserProfileEditor inputs and buttons */
 .input-field {
-  @apply w-full p-2 border border-gray-300 rounded-md text-sm mb-1 focus:ring-primary focus:border-primary;
+  @apply w-full p-2 border border-gray-300 rounded-md text-base focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500;
 }
 
 .btn-add {
-  @apply bg-blue-500 text-white text-xs px-3 py-1 rounded-md hover:bg-blue-600 transition flex items-center justify-center;
+  @apply bg-blue-500 text-white text-sm px-4 py-2 rounded-md hover:bg-blue-600 transition flex items-center justify-center space-x-1;
 }
 
 .btn-remove {
-  @apply text-red-500 hover:text-red-700 text-sm flex items-center;
+  @apply text-red-500 hover:text-red-700 text-sm font-medium flex items-center transition-colors;
 }
 
 .btn-icon-remove {
-  @apply text-red-500 hover:text-red-700 p-1 rounded-full;
+  @apply p-1 rounded-full text-red-500 hover:bg-red-100 transition-colors;
+}
+
+.input-group {
+  @apply flex items-center gap-2 mb-2;
+}
+
+.section-header {
+  @apply font-semibold text-lg mb-2 border-b pb-1 mt-4;
+}
+
+.form-label {
+  @apply block text-sm font-medium text-gray-700;
 }
