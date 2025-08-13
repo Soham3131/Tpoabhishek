@@ -166,6 +166,7 @@ const AdminApplicationReportPage = () => {
                     <ul className="list-disc list-inside text-sm text-gray-700">
                       {item.applicants.map((applicant) => (
                         <li key={applicant._id}>
+                          {/* UPDATED: Added a check for applicant.phone and display it */}
                           {applicant.name} ({applicant.email}) {applicant.phone && ` | Phone: ${applicant.phone}`} {applicant.studentId && `[ID: ${applicant.studentId}]`}
                         </li>
                       ))}

@@ -333,7 +333,7 @@ const Signup = () => {
           {otpSent ? "Verify Your Email" : "Create an Account"}
         </h2>
         <p className={`text-md mb-6 ${textColor} opacity-75 text-center animate-fade-in-up delay-100`}>
-          {otpSent ? "An OTP has been sent to your email. Please check your inbox." : "Let's get started!"}
+          {otpSent ? "An OTP has been sent to your email. Please check your inbox or spam box." : "Let's get started!"}
         </p>
 
         {message && <p className="text-green-400 text-sm mb-4 text-center animate-fade-in-up">{message}</p>}
@@ -351,6 +351,7 @@ const Signup = () => {
                 className={`w-full p-3 rounded-md ${inputBgColor} ${textColor} ${placeholderColor} ${inputBorderColor} border focus:outline-none focus:ring-2 focus:ring-[#6A5ACD] transition-all duration-200`}
                 onChange={handleChange}
                 required
+                value={formData.name}
               />
             </div>
             <div className="mb-4 animate-fade-in-up delay-300">
@@ -363,6 +364,7 @@ const Signup = () => {
                 className={`w-full p-3 rounded-md ${inputBgColor} ${textColor} ${placeholderColor} ${inputBorderColor} border focus:outline-none focus:ring-2 focus:ring-[#6A5ACD] transition-all duration-200`}
                 onChange={handleChange}
                 required
+                value={formData.email}
               />
             </div>
             {/* NEW: Phone number input field */}
@@ -376,6 +378,7 @@ const Signup = () => {
                 className={`w-full p-3 rounded-md ${inputBgColor} ${textColor} ${placeholderColor} ${inputBorderColor} border focus:outline-none focus:ring-2 focus:ring-[#6A5ACD] transition-all duration-200`}
                 onChange={handleChange}
                 required
+                value={formData.phone}
               />
             </div>
             <div className="mb-6 relative animate-fade-in-up delay-400">
@@ -388,6 +391,7 @@ const Signup = () => {
                 className={`w-full p-3 pr-10 rounded-md ${inputBgColor} ${textColor} ${placeholderColor} ${inputBorderColor} border focus:outline-none focus:ring-2 focus:ring-[#6A5ACD] transition-all duration-200`}
                 onChange={handleChange}
                 required
+                value={formData.password}
               />
               <button
                 type="button"
