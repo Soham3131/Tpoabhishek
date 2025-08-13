@@ -145,7 +145,7 @@ exports.getMyApplications = async (req, res) => {
 exports.getAllApplications = async (req, res) => {
   try {
     const applications = await Application.find()
-      .populate('userId', 'name email studentId') // Populate user details
+      .populate('userId', 'name email phone studentId') // Populate user details
       .sort({ appliedAt: -1 });
 
     res.status(200).json(applications);
@@ -161,7 +161,7 @@ exports.getAllApplications = async (req, res) => {
 // @access  Private (Admin)
 exports.getApplicationReport = async (req, res) => {
   try {
-    const allApplications = await Application.find().populate('userId', 'name email studentId');
+    const allApplications = await Application.find().populate('userId', 'name email phone studentId');
 
     // Helper to get content details from respective model
     const getContentDetails = async (contentId, contentType) => {
