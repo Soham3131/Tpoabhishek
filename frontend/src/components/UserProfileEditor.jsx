@@ -1443,6 +1443,7 @@ const handleSave = async () => {
                                 <div key={index} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
                                     <input type="text" name="name" value={lang.name} onChange={(e) => handleLanguageChange(index, e)} className="input-field" style={{ flex: 1 }} placeholder="Language Name" />
                                     <select name="proficiency" value={lang.proficiency} onChange={(e) => handleLanguageChange(index, e)} className="input-field" style={{ width: '6rem' }}>
+                                        <option value="">Select</option>
                                         <option value="">Proficiency</option>
                                         <option value="Beginner">Beginner</option>
                                         <option value="Intermediate">Intermediate</option>
