@@ -8,27 +8,7 @@ const { sendEmail } = require("../services/emailService");
 const { uploadImageToCloudinary } = require("../utils/uploadImage"); // Ensure this path is correct
 
 
-// const setAuthCookies = (res, userId, userRole) => {
-//   const token = generateToken(userId, userRole);
 
-//   const cookieOptions = {
-//     httpOnly: true,
-//     maxAge: 7 * 24 * 60 * 60 * 1000,
-//     path: '/', 
-//   };
-
-//   if (process.env.NODE_ENV === 'production') {
-//     
-//     cookieOptions.secure = true;
-//     cookieOptions.sameSite = 'None';
-//   } else {
-//  
-//     cookieOptions.secure = false; 
-//     cookieOptions.sameSite = 'Lax';
-//   }
-
-//   res.cookie('token', token, cookieOptions);
-// };
 
 
 exports.register = async (req, res) => {
@@ -68,7 +48,17 @@ exports.register = async (req, res) => {
 
     console.log("Register: Generated OTP:", otp, "Expires:", otpExpires);
 
-    const user = await User.create({ name, email, password, role: userRole, otp, otpExpires, isVerified: false });
+    const user = await User.create({
+  name,
+  email,
+  password,
+  phone, // ✅ add phone here
+  role: userRole,
+  otp,
+  otpExpires,
+  isVerified: false
+});
+
     console.log("Register: New user created in DB:", user._id);
     console.log("Register: User OTP and Expiry in DB:", user.otp, user.otpExpires);
     console.log("Register: isVerified status:", user.isVerified);
@@ -84,43 +74,6 @@ exports.register = async (req, res) => {
   }
 };
 
-// @desc    Authenticate a user
-// @route   POST /api/auth/login
-// @access  Public
-// exports.login = async (req, res) => {
-//   const { email, password } = req.body;
-
-//      // --- ADD THESE LOGS1 ---
-//     console.log("AUTH CONTROLLER: Attempting login for email:", email);
-//     // --- END ADDED LOGS ---
-
-//   try {
-//     const user = await User.findOne({ email });
-//     if (!user) return res.status(404).json({ msg: "User not found" });
-
-//     if (!user.isVerified) {
-//         console.log("Login: User not verified for email:", email);
-//         return res.status(401).json({ msg: "Account not verified. Please verify your email with the OTP sent during signup." });
-//     }
-
-//     const isMatch = await bcrypt.compare(password, user.password);
-
-//     if (!isMatch) return res.status(401).json({ msg: "Invalid credentials" });
-
-//     setAuthCookies(res, user._id, user.role);
-
-//      // --- ADD THIS LOGS1 AFTER setAuthCookies ---
-//         console.log("AUTH CONTROLLER: Login successful. Cookie set via setAuthCookies.");
-//         console.log("AUTH CONTROLLER: Headers sent in login response (looking for Set-Cookie):", res.getHeaders());
-//         // --- END ADDED LOG ---
-
-//     const { password: _, ...userData } = user._doc;
-//     res.status(200).json({ user: userData });
-//   } catch (err) {
-//     console.error("Login error:", err);
-//     res.status(500).json({ msg: "Server Error" });
-//   }
-// };
 
 exports.login = async (req, res) => {
   const { email, password } = req.body;
