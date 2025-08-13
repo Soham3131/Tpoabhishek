@@ -34,7 +34,24 @@ exports.register = async (req, res) => {
             existingUser.otpExpires = otpExpires;
             await existingUser.save();
 
-            await sendEmail(email, "Verify your account - OTP (Resend)", `Your new OTP for account verification is: ${otp}. It is valid for 10 minutes.`);
+            // await sendEmail(email, "Verify your account - OTP (Resend)", `Your new OTP for account verification is: ${otp}. It is valid for 10 minutes.`);
+            await sendEmail(
+  email,
+  "Welcome to TPO Abhishek - Verify Your Account",
+  `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
+      <h2 style="color: #4CAF50;">Welcome to TPOAbhishek, ${name}!</h2>
+      <p>Thank you for joining the Training & Placement Cell. To complete your registration, please verify your account using the OTP below:</p>
+      <div style="background: #f4f4f4; padding: 15px; text-align: center; font-size: 20px; font-weight: bold; letter-spacing: 2px;">
+        ${otp}
+      </div>
+      <p>This code will expire in <b>10 minutes</b>.</p>
+      <p>If you did not sign up, please ignore this email.</p>
+      <hr>
+      <p style="font-size: 12px; color: gray;">TPO Abhishek - Training & Placement Cell</p>
+    </div>
+  `
+);
             console.log("Register: Resent OTP successfully.");
             return res.status(200).json({ msg: "Account already registered but not verified. New OTP sent to your email." });
         }
