@@ -8,7 +8,21 @@ const { sendEmail } = require("../services/emailService");
 const { uploadImageToCloudinary } = require("../utils/uploadImage"); // Ensure this path is correct
 
 
-
+const getWelcomeEmailHTML = (otp, name) => `
+  <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
+    <h2 style="color: #4CAF50;">Welcome to TPO Abhishek, ${name}!</h2>
+    <p>Thank you for joining the Training & Placement Cell. 
+    To complete your registration, please verify your account using the OTP below:</p>
+    <div style="background: #f4f4f4; padding: 15px; text-align: center; 
+      font-size: 20px; font-weight: bold; letter-spacing: 2px;">
+      ${otp}
+    </div>
+    <p>This code will expire in <b>10 minutes</b>.</p>
+    <p>If you did not sign up, please ignore this email.</p>
+    <hr>
+    <p style="font-size: 12px; color: gray;">TPO Abhishek - Training & Placement Cell</p>
+  </div>
+`;
 
 
 // exports.register = async (req, res) => {
@@ -97,64 +111,37 @@ exports.register = async (req, res) => {
 
   try {
     if (!name || !email || !password || !phone) {
-      console.log("Register: Missing name, email, phone or password.");
       return res.status(400).json({ msg: "Please enter all fields" });
     }
 
-    // ✅ HTML Email Template
-    const getWelcomeEmailHTML = (otp) => `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
-        <h2 style="color: #4CAF50;">Welcome to TPO Abhishek, ${name}!</h2>
-        <p>Thank you for joining the Training & Placement Cell. 
-        To complete your registration, please verify your account using the OTP below:</p>
-        <div style="background: #f4f4f4; padding: 15px; text-align: center; 
-          font-size: 20px; font-weight: bold; letter-spacing: 2px;">
-          ${otp}
-        </div>
-        <p>This code will expire in <b>10 minutes</b>.</p>
-        <p>If you did not sign up, please ignore this email.</p>
-        <hr>
-        <p style="font-size: 12px; color: gray;">TPO Abhishek - Training & Placement Cell</p>
-      </div>
-    `;
-
-    // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       if (existingUser.isVerified) {
-        console.log("Register: User already exists and is verified for email:", email);
         return res.status(400).json({ msg: "Email already registered and verified. Please login." });
       } else {
-        console.log("Register: User exists but not verified. Resending OTP to:", email);
         const otp = generateOTP();
         const otpExpires = getExpiry();
         existingUser.otp = otp;
         existingUser.otpExpires = otpExpires;
         await existingUser.save();
 
-        // ✅ Send HTML email
         await sendEmail({
-          to: email,
+          to: email.trim(),
           subject: "Welcome to TPO Abhishek - Verify Your Account",
-          html: getWelcomeEmailHTML(otp) // FIXED
+          html: getWelcomeEmailHTML(otp, name)
         });
 
-        console.log("Register: Resent OTP successfully.");
         return res.status(200).json({ msg: "Account already registered but not verified. New OTP sent to your email." });
       }
     }
 
     const userRole = (role && ["user", "recruiter", "admin"].includes(role)) ? role : "user";
-    console.log("Register: User role determined as:", userRole);
-
     const otp = generateOTP();
     const otpExpires = getExpiry();
-    console.log("Register: Generated OTP:", otp, "Expires:", otpExpires);
 
-    // Create new user
     const user = await User.create({
       name,
-      email,
+      email: email.trim(),
       password,
       phone,
       role: userRole,
@@ -163,24 +150,19 @@ exports.register = async (req, res) => {
       isVerified: false
     });
 
-    console.log("Register: New user created in DB:", user._id);
-
-    // ✅ Send HTML email
     await sendEmail({
-      to: email,
+      to: email.trim(),
       subject: "Welcome to TPO Abhishek - Verify Your Account",
-      html: getWelcomeEmailHTML(otp) // FIXED
+      html: getWelcomeEmailHTML(otp, name)
     });
 
-    console.log("Register: Email sent successfully for new user.");
     res.status(200).json({ msg: "OTP sent to your email. Please verify your account." });
 
   } catch (err) {
-    console.error("Register error (caught in try/catch):", err);
+    console.error("Register error:", err);
     res.status(500).json({ msg: "Server Error", detailedError: err.message });
   }
 };
-
 
 exports.login = async (req, res) => {
   const { email, password } = req.body;
