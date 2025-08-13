@@ -112,15 +112,7 @@ axiosInstance.interceptors.request.use(async (config) => {
         // console.log('Axios Interceptor: No JWT token found in localStorage.');
     }
 
-    // --- IMPORTANT: Ensure the final 'return config;' is NOT commented out ---
-    // The previous CSRF logic block was entirely commented out.
-    // If you decided to completely remove CSRF, this is how the interceptor should look.
-
-    // If you plan to re-enable CSRF later, you'll need to uncomment the entire block
-    // and ensure its own 'return config;' is correctly placed within that block,
-    // and that the main interceptor's 'return config;' is also present.
-    // For now, assuming you want CSRF removed, this is the correct structure:
-
+    
     return config; // <-- THIS MUST BE PRESENT AND REACHABLE
 });
 

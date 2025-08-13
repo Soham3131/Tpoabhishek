@@ -3,10 +3,12 @@ import { useAuth } from '../context/AuthContext'; // Assuming AuthContext provid
 import { useNavigate, Link } from 'react-router-dom';
 import Footer from '../components/Footer';
 import discover from "../assets/discover.png"; // Ensure this path is correct
+import SocialPrompt from '../components/SocialPrompt';
 
 const StudentDashboard = () => {
   const { user } = useAuth(); // Get user from AuthContext
   const navigate = useNavigate();
+  const [showSocialPrompt, setShowSocialPrompt] = useState(false);
 
   // Define the new color scheme
   const primaryNavyBlue = "bg-[#1E3A5F]";
@@ -45,6 +47,22 @@ const StudentDashboard = () => {
     { name: "Podcasts with HR", link: "/podcasts", icon: "🎧", description: "Listen to insightful discussions on HR topics.", iconBg: lighterSteelBlue }, // Added Podcasts category
    { name: "Your applications", link: "/my-applications", icon: "📋", description: "Track the status of your service requests and view past interactions.", iconBg: "cyan-100" }, // Added Podcasts category
 ];
+
+useEffect(() => {
+  if (user) {
+    // Always reset the flag when user logs in
+    localStorage.removeItem(`hasSeenSocialPrompt_${user.id}`);
+    setShowSocialPrompt(true);
+  }
+}, [user]);
+
+
+
+   const handleClosePrompt = () => {
+    setShowSocialPrompt(false);
+    // Set a flag in local storage so the prompt doesn't show again for this user.
+    localStorage.setItem(`hasSeenSocialPrompt_${user?.id}`, 'true');
+  };
 
   return (
     <div className={`flex flex-col min-h-screen ${lightGrayBackground}`}>
@@ -138,6 +156,8 @@ const StudentDashboard = () => {
       </main>
 
       <Footer />
+       {showSocialPrompt && <SocialPrompt onClose={handleClosePrompt} />}
+
 
       {/* Custom CSS for animations (retained and added new ones) */}
       <style>{`
