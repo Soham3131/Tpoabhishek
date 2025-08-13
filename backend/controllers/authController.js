@@ -32,12 +32,12 @@ const { uploadImageToCloudinary } = require("../utils/uploadImage"); // Ensure t
 
 
 exports.register = async (req, res) => {
-  const { name, email, password, role } = req.body;
+  const { name, email, password, role , phone } = req.body;
   console.log("Register: Received request for email:", email);
 
   try {
-    if (!name || !email || !password) {
-      console.log("Register: Missing name, email, or password.");
+    if (!name || !email || !password || !phone) {
+      console.log("Register: Missing name, email, phone or password.");
       return res.status(400).json({ msg: "Please enter all fields" });
     }
 
