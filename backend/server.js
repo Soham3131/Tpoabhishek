@@ -59,9 +59,6 @@ app.use(cors({
 }));
 
 
-// --- File Upload Middleware ---
-// This must be placed before express.json() and express.urlencoded()
-// as it handles multipart/form-data.
 app.use(fileUpload({
   useTempFiles: true, // Use temporary files for uploads
   tempFileDir: '/tmp/', // Specify a temporary directory for files (required for Render)
@@ -75,8 +72,7 @@ app.use(express.json());
 // For parsing URL-encoded form data
 app.use(express.urlencoded({ extended: false }));
 
-// --- Cookie Parser Middleware ---
-// This must be placed before any middleware that relies on cookies, such as csurf.
+
 app.use(cookieParser());
 
 //logs1
@@ -102,25 +98,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// const csrfProtection = csurf({
-//     cookie: {
-//         key: '_csrf',
-//         httpOnly: true,
-//         maxAge: 7 * 24 * 60 * 60 * 1000,
-//         path: '/',
-//         secure: process.env.NODE_ENV === 'production',
-//         sameSite: process.env.NODE_ENV === 'production' ? 'None' : 'Lax',
-//     },
-//     value: (req) => req.headers['x-csrf-token']
-// });
-
-// app.use(csrfProtection);
-
-
-
-// app.get('/csrf-token', (req, res) => {
-//   res.json({ csrfToken: req.csrfToken() });
-// });
 
 
 
@@ -137,27 +114,9 @@ app.use("/api/visits", require("./routes/visitRoutes"));
 app.use("/api/workshops", require("./routes/workshopRoutes"));
 app.use("/api/admin", require("./routes/adminRoutes"));
 app.use("/api/podcasts", require("./routes/podcastRoutes"));
+app.use("/api/corporate-events", require("./routes/corporateEventRoutes"));
 
 
-// --- Global Error Handling Middleware for CSRF Tokens ---
-// This catches specific errors thrown by csurf middleware (e.g., if token is missing or invalid).
-// app.use((err, req, res, next) => {
-//   if (err.code === 'EBADCSRFTOKEN') {
-//     console.error('SERVER: EBADCSRFTOKEN caught for:', {
-//       method: req.method,
-//       path: req.path,
-//       headers: req.headers['x-csrf-token'] ? 'X-CSRF-Token present' : 'X-CSRF-Token absent',
-//       cookies: req.cookies // Log received cookies for debugging
-//     });
-//     // Respond with 403 Forbidden and a message
-//     return res.status(403).json({ msg: 'Invalid CSRF token. Please refresh the page or try again.' });
-//   }
-//   // Pass other errors to the next error handling middleware (if any)
-//   next(err);
-// });
 
-
-// --- Server Listener ---
-// The server listens on the port provided by the environment (e.g., Render) or defaults to 5000.
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

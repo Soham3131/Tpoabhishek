@@ -1,0 +1,143 @@
+import React, { useEffect, useState } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import axiosInstance from '../utils/axios'; // Assuming you have an axiosInstance configured
+import { CalendarIcon, MapPinIcon, BuildingOfficeIcon, LinkIcon, UsersIcon, ChevronLeftIcon } from '@heroicons/react/24/solid';
+
+const CorporateEventDetailsPage = () => {
+    const { id } = useParams(); // Get the event ID from the URL
+    const [event, setEvent] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    const themeColors = {
+        primary: '#1E3A5F',       // Navy Blue
+        secondary: '#4A789C',     // Steel Blue
+        accent: '#FF6B35',        // Orange
+        background: '#F5F7FA',    // Light Gray
+        text: '#2D3436',          // Dark Gray
+    };
+
+    useEffect(() => {
+        const fetchEventDetails = async () => {
+            setLoading(true);
+            setError(null);
+            try {
+                const res = await axiosInstance.get(`/api/corporate-events/${id}`);
+                setEvent(res.data);
+            } catch (err) {
+                console.error("Error fetching corporate event details:", err);
+                setError(err.response?.data?.msg || "Failed to load corporate event details.");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (id) {
+            fetchEventDetails();
+        }
+    }, [id]);
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-[#F5F7FA] text-[#2D3436] p-8">
+                <p>Loading event details...</p>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center bg-[#F5F7FA] text-red-600 p-8">
+                <p className="text-xl mb-4">{error}</p>
+                <Link to="/corporate-events" className="text-[#1E3A5F] hover:underline flex items-center">
+                    <ChevronLeftIcon className="w-5 h-5 mr-1" /> Back to Corporate Events
+                </Link>
+            </div>
+        );
+    }
+
+    if (!event) {
+        return (
+            <div className="min-h-screen flex flex-col items-center justify-center bg-[#F5F7FA] text-[#2D3436] p-8">
+                <p className="text-xl mb-4">Corporate event not found.</p>
+                <Link to="/corporate-events" className="text-[#1E3A5F] hover:underline flex items-center">
+                    <ChevronLeftIcon className="w-5 h-5 mr-1" /> Back to Corporate Events
+                </Link>
+            </div>
+        );
+    }
+
+    return (
+        <div className="min-h-screen bg-[#F5F7FA] py-10 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-6 sm:p-8 md:p-10 border border-gray-100 animate-fade-in-up">
+                <Link to="/corporate-events" className="text-[#4A789C] hover:text-[#1E3A5F] transition-colors duration-200 flex items-center mb-6">
+                    <ChevronLeftIcon className="w-5 h-5 mr-2" /> Back to All Events
+                </Link>
+
+                <h1 className="text-3xl sm:text-4xl font-extrabold text-[#1E3A5F] mb-4 leading-tight">
+                    {event.title}
+                </h1>
+                <p className="text-lg text-gray-600 mb-6">{event.description}</p>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div className="flex items-start text-[#2D3436]">
+                        <BuildingOfficeIcon className="w-6 h-6 mr-3 text-[#4A789C] flex-shrink-0 mt-1" />
+                        <div>
+                            <p className="font-semibold text-base text-gray-500">Host Company</p>
+                            <p className="text-lg">{event.hostCompany}</p>
+                        </div>
+                    </div>
+                    <div className="flex items-start text-[#2D3436]">
+                        <CalendarIcon className="w-6 h-6 mr-3 text-[#4A789C] flex-shrink-0 mt-1" />
+                        <div>
+                            <p className="font-semibold text-base text-gray-500">Date</p>
+                            <p className="text-lg">{new Date(event.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                        </div>
+                    </div>
+                    <div className="flex items-start text-[#2D3436]">
+                        <MapPinIcon className="w-6 h-6 mr-3 text-[#4A789C] flex-shrink-0 mt-1" />
+                        <div>
+                            <p className="font-semibold text-base text-gray-500">Location</p>
+                            <p className="text-lg">{event.location}</p>
+                        </div>
+                    </div>
+                    {event.speakers && event.speakers.length > 0 && (
+                        <div className="flex items-start text-[#2D3436]">
+                            <UsersIcon className="w-6 h-6 mr-3 text-[#4A789C] flex-shrink-0 mt-1" />
+                            <div>
+                                <p className="font-semibold text-base text-gray-500">Speakers</p>
+                                <p className="text-lg">{event.speakers.join(', ')}</p>
+                            </div>
+                        </div>
+                    )}
+                </div>
+
+                {event.registrationLink && (
+                    <div className="mt-8 text-center">
+                        <a
+                            href={event.registrationLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center px-8 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-[#FF6B35] hover:bg-orange-600 transition-colors duration-300 transform hover:scale-105"
+                        >
+                            <LinkIcon className="w-5 h-5 mr-3" /> Register Now
+                        </a>
+                    </div>
+                )}
+            </div>
+
+            {/* Custom Tailwind CSS animations from ContentListingsPage */}
+            <style>{`
+                @keyframes fadeInTop {
+                    from { opacity: 0; transform: translateY(-20px); }
+                    to { opacity: 1; transform: translateY(0); }
+                }
+                .animate-fade-in-up {
+                    animation: fadeInTop 0.8s ease-out forwards;
+                }
+            `}</style>
+        </div>
+    );
+};
+
+export default CorporateEventDetailsPage;

@@ -3,7 +3,8 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios"; // Keep plain axios for the initial login post
 import { useAuth } from "../context/AuthContext";
-import logo1 from "../assets/logo1.png"; // Your logo file
+
+import logo1 from "../assets/logo.gif"; // Your logo file
 import bg from "../assets/bg.png"; // Your background image file
 
 import bg2 from "../assets/bg2.jpg"; // Your background image file
@@ -87,7 +88,7 @@ const Login = () => {
       >
         <div className="flex justify-center mb-6">
           {/* Logo */}
-          <img src={logo1} alt="Company Logo" className="h-20 w-auto object-contain animate-fade-in" onError={(e) => { e.target.onerror = null; e.target.src="https://placehold.co/100x50/3A3A4D/FFFFFF?text=Logo"; }} />
+          <img src={logo1} alt="Company Logo" className="h-[10rem] w-auto object-contain animate-fade-in" onError={(e) => { e.target.onerror = null; e.target.src="https://placehold.co/100x50/3A3A4D/FFFFFF?text=Logo"; }} />
         </div>
 
         <h2 className={`text-3xl font-bold mb-2 ${textColor} text-center animate-fade-in-up`}>Welcome Back!</h2>
