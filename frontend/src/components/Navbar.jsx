@@ -257,7 +257,7 @@ const Navbar = () => {
 
   return (
     <nav className="h-20 bg-gradient-to-r from-[#1E3A5F] via-[#2e567e] to-[#1E3A5F] text-white shadow-3xl animate-fade-in-down relative z-50">
-      <div className="container mx-auto px-6 flex items-center justify-between h-full">
+      <div className="container mx-auto pl-2 pr-4 flex items-center justify-between h-full">
         {/* Logo */}
         <div className="flex-shrink-0">
           <Link to={getHomeLink()} className="flex items-center transform hover:scale-105 transition-transform duration-200">
