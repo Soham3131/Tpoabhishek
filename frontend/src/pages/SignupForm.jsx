@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { registerUser, verifyUserOtp } from "../services/authService";
 import { useAuth } from "../context/AuthContext";
-import logo1 from "../assets/logo.gif"; // Your logo file
+import logo1 from "../assets/logo1.png"; // Your logo file
 import bg from "../assets/bg.png"; // Your background image file
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline'; // Importing icons for password visibility
 

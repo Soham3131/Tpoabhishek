@@ -4,7 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 import axios from "axios"; // Keep plain axios for the initial login post
 import { useAuth } from "../context/AuthContext";
 
-import logo1 from "../assets/logo.gif"; // Your logo file
+import logo1 from "../assets/logo1.png"; // Your logo file
 import bg from "../assets/bg.png"; // Your background image file
 
 import bg2 from "../assets/bg2.jpg"; // Your background image file
