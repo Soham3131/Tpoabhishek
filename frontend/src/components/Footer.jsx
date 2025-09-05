@@ -3,7 +3,7 @@
 import { FaFacebookF, FaInstagram, FaLinkedinIn, FaWhatsapp } from "react-icons/fa";
 import { motion } from "framer-motion";
 // import logo from "../assets/logo.png";
-import logo from "../assets/logo.gif";
+import logo from "../assets/logo1.png";
 
 export default function Footer() {
   return (
