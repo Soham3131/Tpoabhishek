@@ -410,15 +410,21 @@ const Navbar = () => {
     const { user, setUser, isLoggedIn } = useAuth();
     const navigate = useNavigate();
     const profileDropdownRef = useRef(null);
+    const mobileMenuRef = useRef(null);
 
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target)) {
                 setProfileDropdownOpen(false);
             }
+            if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target)) {
+                setMobileMenuOpen(false);
+            }
         };
         document.addEventListener("mousedown", handleClickOutside);
-        return () => document.removeEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
     }, []);
 
     const handleLogout = async () => {
@@ -427,6 +433,7 @@ const Navbar = () => {
             setUser(null);
             navigate("/login");
             setProfileDropdownOpen(false);
+            setMobileMenuOpen(false);
         } catch (err) {
             console.error("Logout failed:", err);
             alert(err.response?.data?.msg || "Logout failed");
@@ -465,6 +472,17 @@ const Navbar = () => {
                     </Link>
                 </div>
 
+                {/* Mobile Hamburger */}
+                <div className="md:hidden flex items-center">
+                    <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+                        {mobileMenuOpen ? (
+                            <XMarkIcon className="w-8 h-8 text-white" />
+                        ) : (
+                            <Bars3Icon className="w-8 h-8 text-white" />
+                        )}
+                    </button>
+                </div>
+
                 {/* Desktop Menu */}
                 <div className="hidden md:flex flex-1 justify-center space-x-10 text-lg font-medium">
                     {[
@@ -480,7 +498,6 @@ const Navbar = () => {
                             <span className="absolute left-0 -bottom-1 w-0 h-1 bg-[#FF6B35] group-hover:w-full transition-all duration-300 rounded-full"></span>
                         </Link>
                     ))}
-
                     <div
                         onMouseEnter={() => setServicesOpen(true)}
                         onMouseLeave={() => setServicesOpen(false)}
@@ -536,40 +553,40 @@ const Navbar = () => {
                         </>
                     )}
                 </div>
-
-                {/* Mobile Hamburger */}
-                <div className="md:hidden flex items-center">
-                    <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-                        {mobileMenuOpen ? (
-                            <XMarkIcon className="w-8 h-8 text-white" />
-                        ) : (
-                            <Bars3Icon className="w-8 h-8 text-white" />
-                        )}
-                    </button>
-                </div>
             </div>
 
             {/* Mobile Dropdown */}
             {mobileMenuOpen && (
-                <div className="md:hidden bg-[#2e567e] text-white px-6 py-4 space-y-4 animate-fade-in-down">
+                <div ref={mobileMenuRef} className="md:hidden bg-[#2e567e] text-white px-6 py-4 space-y-4 animate-fade-in-down">
                     {isLoggedIn && (
-                        // This section is now a single link to the profile page
-                        <Link to={getHomeLink()} onClick={() => setMobileMenuOpen(false)} className="flex items-center justify-start space-x-4 pb-4 border-b border-gray-400/50">
-                            {/* Profile Photo/Icon */}
-                            <div className="relative">
-                                <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[#FF6B35] text-white overflow-hidden border-2 border-white shadow-lg">
-                                    {user?.profilePicture ? (
-                                        <img src={user.profilePicture} alt="Profile" className="w-full h-full object-cover" />
-                                    ) : (
-                                        <UserCircleIcon className="w-8 h-8 text-white" />
-                                    )}
+                        <div className="pb-4 border-b border-gray-400/50">
+                            {/* Profile section is now a button that toggles the dropdown */}
+                            <button
+                                onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+                                className="flex items-center justify-start space-x-4 w-full text-white"
+                            >
+                                <div className="relative">
+                                    <div className="flex items-center justify-center w-10 h-10 rounded-full bg-[#FF6B35] text-white overflow-hidden border-2 border-white shadow-lg">
+                                        {user?.profilePicture ? (
+                                            <img src={user.profilePicture} alt="Profile" className="w-full h-full object-cover" />
+                                        ) : (
+                                            <UserCircleIcon className="w-8 h-8 text-white" />
+                                        )}
+                                    </div>
                                 </div>
-                            </div>
-                            <div>
-                                <p className="font-semibold text-lg">{user?.name}</p>
-                                <p className="text-sm text-gray-300">Resume Builder</p>
-                            </div>
-                        </Link>
+                                <div>
+                                    <p className="font-semibold text-lg">{user?.name}</p>
+                                    <p className="text-sm text-gray-300">Resume Builder</p>
+                                </div>
+                            </button>
+                            
+                            {/* The dropdown content itself */}
+                            {profileDropdownOpen && (
+                                <div className="mt-4 w-full bg-white rounded-lg shadow-xl py-4 z-50 text-[#2D3436] animate-fade-in-up-dropdown overflow-hidden border border-[#4A789C]">
+                                    <UserProfileEditor onCloseDropdown={() => { setProfileDropdownOpen(false); setMobileMenuOpen(false); }} />
+                                </div>
+                            )}
+                        </div>
                     )}
 
                     {[
