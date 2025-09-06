@@ -1,27 +1,28 @@
+/* Overlay background */
 .popup-overlay {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.4);
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 999;
 }
 
+/* Popup box */
 .popup-box {
   background: #fff;
-  border-radius: 12px;
   padding: 20px;
-  max-width: 420px;
-  width: 90%;
+  border-radius: 12px;
+  width: 350px;
+  max-width: 90%;
   text-align: center;
   position: relative;
-  overflow: hidden;
 }
 
+/* Close button */
 .popup-close {
   position: absolute;
   top: 10px;
@@ -32,62 +33,95 @@
   cursor: pointer;
 }
 
+/* Title */
 .popup-title {
-  font-size: 20px;
-  margin-bottom: 10px;
-  line-height: 1.3;
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 12px;
 }
 
 .highlight {
-  color: #0056d6;
-  font-weight: bold;
+  color: #007bff;
 }
 
+/* Paragraph text */
 .popup-text {
   font-size: 14px;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
+  color: #333;
 }
 
+.popup-text.small-text {
+  font-size: 13px;
+  margin-bottom: 14px;
+  color: #555;
+}
+
+/* Buttons wrapper */
 .popup-buttons {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 10px;
-  justify-content: center;
 }
 
+/* General button style */
 .popup-btn {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 10px 14px;
-  border-radius: 50px;
-  color: #fff;
-  text-decoration: none;
-  font-weight: bold;
-  font-size: 14px;
-  min-width: 150px;
   justify-content: center;
-  position: relative;
-  overflow: hidden;
-  z-index: 1;
+  padding: 10px;
+  border-radius: 25px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  color: #fff;
+  transition: background 0.3s ease;
 }
 
-.insta { background: #ff5722; }
-.whatsapp { background: #25d366; }
-.facebook { background: #1877f2; }
+/* Button colors */
+.popup-btn.insta {
+  background: #f56040;
+}
+.popup-btn.insta:hover {
+  background: #e14b2d;
+}
 
+.popup-btn.whatsapp {
+  background: #25d366;
+}
+.popup-btn.whatsapp:hover {
+  background: #1ebe57;
+}
+
+.popup-btn.facebook {
+  background: #1877f2;
+}
+.popup-btn.facebook:hover {
+  background: #0f65d4;
+}
+
+/* CV Section */
+.popup-cv-section {
+  margin-top: 24px;
+  text-align: center;
+}
+
+.popup-subtitle {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+/* CV Button styling (full width like social buttons) */
+.popup-btn.cv-btn {
+  background: #6c63ff;
+  width: 100%;
+}
+.popup-btn.cv-btn:hover {
+  background: #574fd6;
+}
+
+/* Animate icons */
 .icon-animate {
-  animation: pulse 1.2s infinite;
-  transition: transform 0.4s ease-in-out;
-}
-
-/* This is the key change to keep the icon within the button */
-.popup-btn:hover .icon-animate {
-  transform: scale(1.3);
-}
-
-@keyframes pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.1); }
-  100% { transform: scale(1); }
+  margin-right: 8px;
 }
